@@ -1,0 +1,16 @@
+# Compiled source #
+*.o
+*.so
+# OS generate files #
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+# vi file #
+*.swp
+# ROOT file #
+*.root
+# Plots #
+*.pdf
+# logs
+*.txt
