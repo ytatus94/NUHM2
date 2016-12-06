@@ -43,28 +43,28 @@ double calculate_Meff(double Ht, double Etmiss)
 
 double calculate_mll(vector<Lepton> leptons)
 {
-	// calculate the invariant mass of the 2 leading leptons
-	if (leptons.size() < 2)
-		return -999.;
+    // calculate the invariant mass of the 2 leading leptons
+    if (leptons.size() < 2)
+        return -999.;
 
-	TLorentzVector tlv_lept_0, tlv_lept_1;
-	tlv_lept_0.SetPtEtaPhiM(leptons.at(0).get_pt(), leptons.at(0).get_eta(), leptons.at(0).get_phi(), leptons.at(0).get_M());
-	tlv_lept_1.SetPtEtaPhiM(leptons.at(1).get_pt(), leptons.at(1).get_eta(), leptons.at(1).get_phi(), leptons.at(1).get_M());
-	double mll = (tlv_lept_0 + tlv_lept_1).M();
-	return mll;
+    TLorentzVector tlv_lept_0, tlv_lept_1;
+    tlv_lept_0.SetPtEtaPhiM(leptons.at(0).get_pt(), leptons.at(0).get_eta(), leptons.at(0).get_phi(), leptons.at(0).get_M());
+    tlv_lept_1.SetPtEtaPhiM(leptons.at(1).get_pt(), leptons.at(1).get_eta(), leptons.at(1).get_phi(), leptons.at(1).get_M());
+    double mll = (tlv_lept_0 + tlv_lept_1).M();
+    return mll;
 }
 
 double calculate_mjj(vector<Jet> jets)
 {
-	// calculate the invariant mass of the 2 leading jets
-	if (jets.size() < 2) 
-		return -999.;
+    // calculate the invariant mass of the 2 leading jets
+    if (jets.size() < 2) 
+        return -999.;
 
-	TLorentzVector tlv_jets_0, tlv_jets_1;
-	tlv_jets_0.SetPtEtaPhiE(jets.at(0).get_pt(), jets.at(0).get_eta(), jets.at(0).get_phi(), jets.at(0).get_E());
-	tlv_jets_1.SetPtEtaPhiE(jets.at(1).get_pt(), jets.at(1).get_eta(), jets.at(1).get_phi(), jets.at(1).get_E());
-	double mjj = (tlv_jets_0 + tlv_jets_1).M();
-	return mjj;
+    TLorentzVector tlv_jets_0, tlv_jets_1;
+    tlv_jets_0.SetPtEtaPhiE(jets.at(0).get_pt(), jets.at(0).get_eta(), jets.at(0).get_phi(), jets.at(0).get_E());
+    tlv_jets_1.SetPtEtaPhiE(jets.at(1).get_pt(), jets.at(1).get_eta(), jets.at(1).get_phi(), jets.at(1).get_E());
+    double mjj = (tlv_jets_0 + tlv_jets_1).M();
+    return mjj;
 }
 
 #endif // #define USEFUL_FUNCTIONS_CXX
