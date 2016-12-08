@@ -1,6 +1,11 @@
 # NUHM2
 This is the framework for NUHM2 SR optimization.
 
+### v05. Change histogram names
+* Change histogram name from h_XXX_PRW to h_XXX_weighted
+* histograms are separated into data and mc.
+
+
 ### v04. Add two scripts
 * Add `run_bkg_samples.sh` and `run_signal_samples.sh` to run over all samples.
 

@@ -1,5 +1,5 @@
-#ifndef ytNUHM2Analysis_ytEventSelection_H
-#define ytNUHM2Analysis_ytEventSelection_H
+#ifndef ytEventSelection_H
+#define ytEventSelection_H
 
 #include <EventLoop/Algorithm.h>
 
@@ -53,13 +53,13 @@ public:
     // user defined variables
     string process;
 
-    double  derivation_stat_weights; //!
+    double derivation_stat_weights; //!
 
-    float   luminosity;
-    float   cross_section; //!
-    float   k_factor; //!
-    float   filter_efficiency; //!
-    float   cross_section_kfactor_efficiency; //!
+    float luminosity;
+    float cross_section; //!
+    float k_factor; //!
+    float filter_efficiency; //!
+    float cross_section_kfactor_efficiency; //!
 
     //vector<double>        sum_of_weight_at_cut; //!
 
@@ -188,7 +188,7 @@ public:
     vector<bool>    *Mu_isCosmic; //!
     //#ifdef _IS_MC_
     vector<int>     *Mu_type; //!
-    vector<int> *Mu_origin; //!
+    vector<int>     *Mu_origin; //!
     //#endif // #ifdef _IS_MC_
     vector<double>  *Mu_ptcone20; //!
     vector<double>  *Mu_ptcone30; //!
@@ -593,10 +593,10 @@ public:
     TH1F *h_NLepts; //!
     TH1F *h_NJets; //!
 
-    TH1F *h_Nvtx_PRW; //!
-    TH1F *h_AvgMu_PRW; //!
-    TH1F *h_NLepts_PRW; //!
-    TH1F *h_NJets_PRW; //!
+    TH1F *h_Nvtx_weighted; //!
+    TH1F *h_AvgMu_weighted; //!
+    TH1F *h_NLepts_weighted; //!
+    TH1F *h_NJets_weighted; //!
 
     // Canvas
     TCanvas *c_Nvtx; //!
@@ -682,7 +682,7 @@ public:
         vector<bool>    *El_TrigMatch_e24_lhtight_nod0_ivarloose,
         vector<bool>    *El_TrigMatch_e60_lhmedium_nod0);
 
-void fill_muons(
+    void fill_muons(
         Int_t           NMu,
         int             flavor,
         vector<double>  *Mu_eta,
@@ -783,13 +783,13 @@ void fill_muons(
         vector<bool>    *El_isTightLH,
         vector<int>     *El_nBLayerHits,
         vector<int>     *El_expectBLayerHit,
-        /*
+/*
         vector<int>     *El_type, // MC only
         vector<int>     *El_origin, // MC only
         vector<int>     *El_bkgMotherPdgId, // MC only
         vector<int>     *El_bkgOrigin, // MC only
         vector<int>     *El_chFlip, // MC only
-        */
+*/
         vector<double>  *El_ptcone20,
         vector<double>  *El_ptcone30,
         vector<double>  *El_ptcone40,
@@ -837,10 +837,10 @@ void fill_muons(
         vector<bool>    *Mu_passOR,
         vector<bool>    *Mu_isTight,
         vector<bool>    *Mu_isCosmic,
-        /*
+/*
         vector<int>     *Mu_type, // MC only
         vector<int>     *Mu_origin, // MC only
-        */
+*/
         vector<double>  *Mu_ptcone20,
         vector<double>  *Mu_ptcone30,
         vector<double>  *Mu_ptcone40,
@@ -888,12 +888,12 @@ void fill_muons(
         vector<double>  *Jet_MV2c20,
         vector<double>  *Jet_MV2c10,
         vector<double>  *Jet_SFw,
-        /*
+/*
         vector<int>     *Jet_ConeTruthLabel, // MC only
         vector<int>     *Jet_PartonTruthLabel, // MC only
         vector<int>     *Jet_HadronConeExclTruthLabel, // MC only
         vector<double>  *Jet_deltaR, // MC only
-        */
+*/
         vector<int>     *Jet_nTrk,
         vector<bool>    *Jet_passOR);
     //#endif // #ifdef _IS_DATA_
@@ -935,8 +935,8 @@ void fill_muons(
     void set_isAF2Sim(bool b) { isAF2Sim = b; }
 
     void set_process(string s) { process = s; }
-/*
     void set_luminosity(double d) { luminosity = d; }
+/*
     void set_cross_section(double d) { cross_section = d; }
     void set_k_factor(double d) { k_factor = d; }
     void set_filter_efficiency(double d) { filter_efficiency = d; }

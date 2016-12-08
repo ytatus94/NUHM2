@@ -75,20 +75,20 @@ EL::StatusCode ytEventSelection::histInitialize ()
     wk()->addOutput(h_NLepts);
     wk()->addOutput(h_NJets);
 
-    h_Nvtx_PRW      = new TH1F("h_Nvtx_PRW", "Nvtx (PRW);Nvtx;Events", 50, 0 , 50);
-    h_AvgMu_PRW     = new TH1F("h_AvgMu_PRW", "AvgMu (PRW);<#mu>;Events", 50, 0 , 50);
-    h_NLepts_PRW    = new TH1F("h_NLepts_PRW", "Number of leptons (PRW);N_{leptons};Events",10, 0, 10);
-    h_NJets_PRW     = new TH1F("h_NJets_PRW", "Number of jets (PRW);N_{jets};Events", 40, 0, 40);
+    h_Nvtx_weighted      = new TH1F("h_Nvtx_weighted", "Nvtx (weighted);Nvtx;Events", 50, 0 , 50);
+    h_AvgMu_weighted     = new TH1F("h_AvgMu_weighted", "AvgMu (weighted);<#mu>;Events", 50, 0 , 50);
+    h_NLepts_weighted    = new TH1F("h_NLepts_weighted", "Number of leptons (weighted);N_{leptons};Events",10, 0, 10);
+    h_NJets_weighted     = new TH1F("h_NJets_weighted", "Number of jets (weighted);N_{jets};Events", 40, 0, 40);
     
-    h_Nvtx_PRW->Sumw2();
-    h_AvgMu_PRW->Sumw2();
-    h_NLepts_PRW->Sumw2();
-    h_NJets_PRW->Sumw2();
+    h_Nvtx_weighted->Sumw2();
+    h_AvgMu_weighted->Sumw2();
+    h_NLepts_weighted->Sumw2();
+    h_NJets_weighted->Sumw2();
 
-    wk()->addOutput(h_Nvtx_PRW);
-    wk()->addOutput(h_AvgMu_PRW);
-    wk()->addOutput(h_NLepts_PRW);
-    wk()->addOutput(h_NJets_PRW);
+    wk()->addOutput(h_Nvtx_weighted);
+    wk()->addOutput(h_AvgMu_weighted);
+    wk()->addOutput(h_NLepts_weighted);
+    wk()->addOutput(h_NJets_weighted);
 
     return EL::StatusCode::SUCCESS;
 }
@@ -105,6 +105,7 @@ EL::StatusCode ytEventSelection::fileExecute ()
 
     TH1F *h1 = (TH1F *)wk()->inputFile()->Get("DerivationStat_Weights");
     derivation_stat_weights += h1->GetBinContent(1);
+    //cout <<   "derivation_stat_weights=" << h1->GetBinContent(1) << endl;
 
     return EL::StatusCode::SUCCESS;
 }
@@ -910,28 +911,34 @@ EL::StatusCode ytEventSelection::execute ()
     sort(vec_baseline_lept.begin(), vec_baseline_lept.end(), sort_descending_Pt<Lepton>);
 
     // Dump histograms
-    h_Nvtx->Fill(Nvtx, EventWeight);
-    h_Nvtx_PRW->Fill(Nvtx, EventWeight * PRWWeight);
+    if (isData) {
+        h_Nvtx->Fill(Nvtx);
+        h_AvgMu->Fill(AvgMu);
 
-    h_AvgMu->Fill(AvgMu, EventWeight);
-    h_AvgMu_PRW->Fill(AvgMu, EventWeight * PRWWeight);
+        if (vec_lept.size() > 0)
+            h_NLepts->Fill(vec_lept.at(0).get_number());
+        else
+            h_NLepts->Fill(0.);
 
-    if (vec_lept.size() > 0) {
-        h_NLepts->Fill(vec_lept.at(0).get_number(), EventWeight);
-        h_NLepts_PRW->Fill(vec_lept.at(0).get_number(), EventWeight * PRWWeight);
+        if (vec_jets.size() > 0)
+            h_NJets->Fill(vec_jets.at(0).get_number());
+        else
+            h_NJets->Fill(0.);
     }
-    else {
-        h_NLepts->Fill(0., EventWeight);
-        h_NLepts_PRW->Fill(0., EventWeight * PRWWeight);
-    }
+    else if (isMC) {
+        double weight = cross_section_kfactor_efficiency * EventWeight * PRWWeight;
+        h_Nvtx_weighted->Fill(Nvtx, weight);
+        h_AvgMu_weighted->Fill(AvgMu, weight);
 
-    if (vec_jets.size() > 0) {
-        h_NJets->Fill(vec_jets.at(0).get_number(), EventWeight);
-        h_NJets_PRW->Fill(vec_jets.at(0).get_number(), EventWeight * PRWWeight);
-    }
-    else {
-        h_NJets->Fill(0., EventWeight);
-        h_NJets_PRW->Fill(0., EventWeight * PRWWeight);
+        if (vec_lept.size() > 0)
+            h_NLepts_weighted->Fill(vec_lept.at(0).get_number(), weight);
+        else
+            h_NLepts_weighted->Fill(0., weight);
+
+        if (vec_jets.size() > 0)
+            h_NJets_weighted->Fill(vec_jets.at(0).get_number(), weight);
+        else
+            h_NJets_weighted->Fill(0., weight);
     }
 
     //----------------------------------//
@@ -1031,7 +1038,6 @@ EL::StatusCode ytEventSelection::execute ()
                                                     HLT_2e12_lhloose_L12EM10VH, HLT_e17_lhloose_mu14, HLT_mu18_mu8noL1, HLT_xe70,
                                                     HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu22_mu8noL1, HLT_xe100_mht_L1XE50,
                                                     Etmiss_TST_Et);
-
     if (ee_cut1 == 1 && ee_cut2) {
         m_cutflow->update(ee_trigger_matching, ee_cut2);
     }
@@ -1253,15 +1259,15 @@ void ytEventSelection::debug_lept_print(vector<Lepton> vec_lept)
     for (auto & lep_itr : vec_lept) {
         //cout << "NEl+NMu=" << lep_itr.get_number() << endl;
         cout << i + 1
-        << ": pt=" << lep_itr.get_pt()
-        << ", eta=" << lep_itr.get_eta()
-        << ", phi=" << lep_itr.get_phi()
-        << ", baseline=" << lep_itr.get_baseline()
-        << ", passOR=" << lep_itr.get_passOR()
-        << ", isSignal=" << lep_itr.get_isSignal()
-        << ", flavor=" << lep_itr.get_flavor()
-        << ", charge=" << lep_itr.get_charge()
-        << endl;
+            << ": pt=" << lep_itr.get_pt()
+            << ", eta=" << lep_itr.get_eta()
+            << ", phi=" << lep_itr.get_phi()
+            << ", baseline=" << lep_itr.get_baseline()
+            << ", passOR=" << lep_itr.get_passOR()
+            << ", isSignal=" << lep_itr.get_isSignal()
+            << ", flavor=" << lep_itr.get_flavor()
+            << ", charge=" << lep_itr.get_charge()
+            << endl;
         i++;
     }
 }
@@ -1276,42 +1282,42 @@ void ytEventSelection::debug_elec_print(vector<Electron> vec_elec)
     for (auto & el_itr : vec_elec) {
         //cout << "NEl=" << el_itr.get_number() << endl;
         cout << i + 1
-        << ": pt=" << el_itr.get_pt() 
-        << ", eta=" << el_itr.get_eta() << ", etaclus=" << el_itr.get_etaclus() 
-        << ", phi=" << el_itr.get_phi() 
-        << ", baseline=" << el_itr.get_baseline() 
-        << ", passOR=" << el_itr.get_passOR() 
-        << ", isSignal=" << el_itr.get_isSignal()
-        << ", flavor=" << el_itr.get_flavor() 
-        << ", charge=" << el_itr.get_charge()
-        << ", d0pvtx=" << el_itr.get_d0pvtx()
-        << ", |d0sig|=" << fabs(el_itr.get_sigd0())
-        << ", |z0sinTheta|=" << fabs(el_itr.get_z0sinTheta())
-        << ", ptvarcone20/pt=" << el_itr.get_ptvarcone20() / el_itr.get_pt()
-        << ", topoetcone20/pt=" << el_itr.get_topoetcone20() / el_itr.get_pt()
-        << ", SFwTightLH=" << el_itr.get_SFwTightLH()
-        << ", SFwMediumLH=" << el_itr.get_SFwMediumLH()
-        << ", SFwLooseAndBLayerLH=" << el_itr.get_SFwLooseAndBLayerLH()
-        << ", IsoSFwMediumLH=" << el_itr.get_IsoSFwMediumLH()
-        << ", SFwTrigMediumLH_single=" << el_itr.get_SFwTrigMediumLH_single()
-        << ", SFwTrigMediumLH_e12_lhloose_L1EM10VH=" << el_itr.get_SFwTrigMediumLH_e12_lhloose_L1EM10VH()
-        << ", SFwTrigMediumLH_e17_lhloose=" << el_itr.get_SFwTrigMediumLH_e17_lhloose()
-        << ", SFwTrigLooseAndBLayerLH_e12_lhloose_L1EM10VH=" << el_itr.get_SFwTrigLooseAndBLayerLH_e12_lhloose_L1EM10VH()
-        << ", trigMatch_e12_lhloose_L1EM10VH=" << el_itr.get_trigMatch_e12_lhloose_L1EM10VH()
-        << ", trigMatch_e17_lhloose=" << el_itr.get_trigMatch_e17_lhloose()
-        << ", trigMatch_e17_lhloose_mu14=" << el_itr.get_trigMatch_e17_lhloose_mu14()
-        << ", trigMatch_e17_lhloose_nod0_mu14=" << el_itr.get_trigMatch_e17_lhloose_nod0_mu14()
-        << ", trigMatch_e24_lhmedium_iloose_L1EM20VH=" << el_itr.get_trigMatch_e24_lhmedium_iloose_L1EM20VH()
-        << ", trigMatch_e60_lhmedium=" << el_itr.get_trigMatch_e60_lhmedium()
-        << ", trigMatch_2e12_lhloose_L12EM10VH=" << el_itr.get_trigMatch_2e12_lhloose_L12EM10VH()
-        << ", trigMatch_2e15_lhloose_L12EM10VH=" << el_itr.get_trigMatch_2e15_lhloose_L12EM10VH()
-        << ", trigMatch_2e15_lhvloose_L12EM13VH=" << el_itr.get_trigMatch_2e15_lhvloose_L12EM13VH()
-        << ", trigMatch_2e15_lhvloose_nod0_L12EM13VH=" << el_itr.get_trigMatch_2e15_lhvloose_nod0_L12EM13VH()
-        << ", trigMatch_2e17_lhvloose_nod0=" << el_itr.get_trigMatch_2e17_lhvloose_nod0()
-        << ", trigMatch_e24_lhmedium_nod0_ivarloose=" << el_itr.get_trigMatch_e24_lhmedium_nod0_ivarloose()
-        << ", trigMatch_e24_lhtight_nod0_ivarloose=" << el_itr.get_trigMatch_e24_lhtight_nod0_ivarloose()
-        << ", trigMatch_e60_lhmedium_nod0=" << el_itr.get_trigMatch_e60_lhmedium_nod0()
-        << endl;
+            << ": pt=" << el_itr.get_pt() 
+            << ", eta=" << el_itr.get_eta() << ", etaclus=" << el_itr.get_etaclus() 
+            << ", phi=" << el_itr.get_phi() 
+            << ", baseline=" << el_itr.get_baseline() 
+            << ", passOR=" << el_itr.get_passOR() 
+            << ", isSignal=" << el_itr.get_isSignal()
+            << ", flavor=" << el_itr.get_flavor() 
+            << ", charge=" << el_itr.get_charge()
+            << ", d0pvtx=" << el_itr.get_d0pvtx()
+            << ", |d0sig|=" << fabs(el_itr.get_sigd0())
+            << ", |z0sinTheta|=" << fabs(el_itr.get_z0sinTheta())
+            << ", ptvarcone20/pt=" << el_itr.get_ptvarcone20() / el_itr.get_pt()
+            << ", topoetcone20/pt=" << el_itr.get_topoetcone20() / el_itr.get_pt()
+            << ", SFwTightLH=" << el_itr.get_SFwTightLH()
+            << ", SFwMediumLH=" << el_itr.get_SFwMediumLH()
+            << ", SFwLooseAndBLayerLH=" << el_itr.get_SFwLooseAndBLayerLH()
+            << ", IsoSFwMediumLH=" << el_itr.get_IsoSFwMediumLH()
+            << ", SFwTrigMediumLH_single=" << el_itr.get_SFwTrigMediumLH_single()
+            << ", SFwTrigMediumLH_e12_lhloose_L1EM10VH=" << el_itr.get_SFwTrigMediumLH_e12_lhloose_L1EM10VH()
+            << ", SFwTrigMediumLH_e17_lhloose=" << el_itr.get_SFwTrigMediumLH_e17_lhloose()
+            << ", SFwTrigLooseAndBLayerLH_e12_lhloose_L1EM10VH=" << el_itr.get_SFwTrigLooseAndBLayerLH_e12_lhloose_L1EM10VH()
+            << ", trigMatch_e12_lhloose_L1EM10VH=" << el_itr.get_trigMatch_e12_lhloose_L1EM10VH()
+            << ", trigMatch_e17_lhloose=" << el_itr.get_trigMatch_e17_lhloose()
+            << ", trigMatch_e17_lhloose_mu14=" << el_itr.get_trigMatch_e17_lhloose_mu14()
+            << ", trigMatch_e17_lhloose_nod0_mu14=" << el_itr.get_trigMatch_e17_lhloose_nod0_mu14()
+            << ", trigMatch_e24_lhmedium_iloose_L1EM20VH=" << el_itr.get_trigMatch_e24_lhmedium_iloose_L1EM20VH()
+            << ", trigMatch_e60_lhmedium=" << el_itr.get_trigMatch_e60_lhmedium()
+            << ", trigMatch_2e12_lhloose_L12EM10VH=" << el_itr.get_trigMatch_2e12_lhloose_L12EM10VH()
+            << ", trigMatch_2e15_lhloose_L12EM10VH=" << el_itr.get_trigMatch_2e15_lhloose_L12EM10VH()
+            << ", trigMatch_2e15_lhvloose_L12EM13VH=" << el_itr.get_trigMatch_2e15_lhvloose_L12EM13VH()
+            << ", trigMatch_2e15_lhvloose_nod0_L12EM13VH=" << el_itr.get_trigMatch_2e15_lhvloose_nod0_L12EM13VH()
+            << ", trigMatch_2e17_lhvloose_nod0=" << el_itr.get_trigMatch_2e17_lhvloose_nod0()
+            << ", trigMatch_e24_lhmedium_nod0_ivarloose=" << el_itr.get_trigMatch_e24_lhmedium_nod0_ivarloose()
+            << ", trigMatch_e24_lhtight_nod0_ivarloose=" << el_itr.get_trigMatch_e24_lhtight_nod0_ivarloose()
+            << ", trigMatch_e60_lhmedium_nod0=" << el_itr.get_trigMatch_e60_lhmedium_nod0()
+            << endl;
         i++;
     }
 }
@@ -1326,38 +1332,38 @@ void ytEventSelection::debug_muon_print(vector<Muon> vec_muon)
     for (auto & mu_itr : vec_muon) {
         //cout << "NMu=" << mu_itr.get_number() << endl;
         cout << i + 1
-        << ": pt=" << mu_itr.get_pt()
-        << ", eta=" << mu_itr.get_eta()
-        << ", phi=" << mu_itr.get_phi()
-        << ", baseline=" << mu_itr.get_baseline()
-        << ", passOR=" << mu_itr.get_passOR()
-        << ", isSignal=" << mu_itr.get_isSignal()
-        << ", flavor=" << mu_itr.get_flavor()
-        << ", charge=" << mu_itr.get_charge()
-        << ", isBad=" << mu_itr.get_isBad()
-        << ", isCosmic=" << mu_itr.get_isCosmic()
-        << ", d0pvtx=" << mu_itr.get_d0pvtx()
-        << ", |d0sig|=" << fabs(mu_itr.get_sigd0())
-        << ", |z0sinTheta|=" << fabs(mu_itr.get_z0sinTheta())
-        << ", ptvarcone30/pt=" << mu_itr.get_ptvarcone30() / mu_itr.get_pt()
-        << ", SFw=" << mu_itr.get_SFw()
-        << ", IsoSFw=" << mu_itr.get_IsoSFw()
-        << ", MuTrigSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50=" << mu_itr.get_MuTrigSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50()
-        << ", trigMatch_mu8noL1=" << mu_itr.get_trigMatch_mu8noL1()
-        << ", trigMatch_mu14=" << mu_itr.get_trigMatch_mu14()
-        << ", trigMatch_mu18=" << mu_itr.get_trigMatch_mu18()
-        << ", trigMatch_mu18_mu8noL1=" << mu_itr.get_trigMatch_mu18_mu8noL1()
-        << ", trigMatch_mu20_mu8noL1=" << mu_itr.get_trigMatch_mu20_mu8noL1()
-        << ", trigMatch_mu22_mu8noL1=" << mu_itr.get_trigMatch_mu22_mu8noL1()
-        << ", trigMatch_mu26_imedium=" << mu_itr.get_trigMatch_mu26_imedium()
-        << ", trigMatch_mu50=" << mu_itr.get_trigMatch_mu50()
-        << ", trigMatch_e17_lhloose_mu14=" << mu_itr.get_trigMatch_e17_lhloose_mu14()
-        << ", trigMatch_e17_lhloose_nod0_mu14=" << mu_itr.get_trigMatch_e17_lhloose_nod0_mu14()
-        << ", trigMatch_mu24_iloose=" << mu_itr.get_trigMatch_mu24_iloose()
-        << ", trigMatch_mu24_ivarloose=" << mu_itr.get_trigMatch_mu24_ivarloose()
-        << ", trigMatch_mu24_iloose_L1MU15=" << mu_itr.get_trigMatch_mu24_iloose_L1MU15()
-        << ", trigMatch_mu24_ivarloose_L1MU15=" << mu_itr.get_trigMatch_mu24_ivarloose_L1MU15()
-        << endl;
+            << ": pt=" << mu_itr.get_pt()
+            << ", eta=" << mu_itr.get_eta()
+            << ", phi=" << mu_itr.get_phi()
+            << ", baseline=" << mu_itr.get_baseline()
+            << ", passOR=" << mu_itr.get_passOR()
+            << ", isSignal=" << mu_itr.get_isSignal()
+            << ", flavor=" << mu_itr.get_flavor()
+            << ", charge=" << mu_itr.get_charge()
+            << ", isBad=" << mu_itr.get_isBad()
+            << ", isCosmic=" << mu_itr.get_isCosmic()
+            << ", d0pvtx=" << mu_itr.get_d0pvtx()
+            << ", |d0sig|=" << fabs(mu_itr.get_sigd0())
+            << ", |z0sinTheta|=" << fabs(mu_itr.get_z0sinTheta())
+            << ", ptvarcone30/pt=" << mu_itr.get_ptvarcone30() / mu_itr.get_pt()
+            << ", SFw=" << mu_itr.get_SFw()
+            << ", IsoSFw=" << mu_itr.get_IsoSFw()
+            << ", MuTrigSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50=" << mu_itr.get_MuTrigSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50()
+            << ", trigMatch_mu8noL1=" << mu_itr.get_trigMatch_mu8noL1()
+            << ", trigMatch_mu14=" << mu_itr.get_trigMatch_mu14()
+            << ", trigMatch_mu18=" << mu_itr.get_trigMatch_mu18()
+            << ", trigMatch_mu18_mu8noL1=" << mu_itr.get_trigMatch_mu18_mu8noL1()
+            << ", trigMatch_mu20_mu8noL1=" << mu_itr.get_trigMatch_mu20_mu8noL1()
+            << ", trigMatch_mu22_mu8noL1=" << mu_itr.get_trigMatch_mu22_mu8noL1()
+            << ", trigMatch_mu26_imedium=" << mu_itr.get_trigMatch_mu26_imedium()
+            << ", trigMatch_mu50=" << mu_itr.get_trigMatch_mu50()
+            << ", trigMatch_e17_lhloose_mu14=" << mu_itr.get_trigMatch_e17_lhloose_mu14()
+            << ", trigMatch_e17_lhloose_nod0_mu14=" << mu_itr.get_trigMatch_e17_lhloose_nod0_mu14()
+            << ", trigMatch_mu24_iloose=" << mu_itr.get_trigMatch_mu24_iloose()
+            << ", trigMatch_mu24_ivarloose=" << mu_itr.get_trigMatch_mu24_ivarloose()
+            << ", trigMatch_mu24_iloose_L1MU15=" << mu_itr.get_trigMatch_mu24_iloose_L1MU15()
+            << ", trigMatch_mu24_ivarloose_L1MU15=" << mu_itr.get_trigMatch_mu24_ivarloose_L1MU15()
+            << endl;
         i++;
     }
 }
@@ -1372,20 +1378,20 @@ void ytEventSelection::debug_jets_print(vector<Jet> vec_jets)
     for (auto & jet_itr : vec_jets) {
         //cout << "NJet=" << jet_itr.get_number() << endl;
         cout << i + 1
-        << ": pt=" << jet_itr.get_pt()
-        << ", eta=" << jet_itr.get_eta()
-        << ", phi=" << jet_itr.get_phi()
-        << ", baseline=" << jet_itr.get_baseline()
-        << ", passOR=" << jet_itr.get_passOR()
-        << ", isBjet=" << jet_itr.get_isBjet()
-        << ", quality=" << jet_itr.get_quality()
-        << ", JVT=" << jet_itr.get_JVT()
-        << ", JVTsf=" << jet_itr.get_JVTsf()
-        << ", MV2c20=" << jet_itr.get_MV2c20()
-        << ", MV2c10=" << jet_itr.get_MV2c10()
-        << ", SFw=" << jet_itr.get_SFw()
-        << ", nTrk=" << jet_itr.get_nTrk()
-        << endl;
+            << ": pt=" << jet_itr.get_pt()
+            << ", eta=" << jet_itr.get_eta()
+            << ", phi=" << jet_itr.get_phi()
+            << ", baseline=" << jet_itr.get_baseline()
+            << ", passOR=" << jet_itr.get_passOR()
+            << ", isBjet=" << jet_itr.get_isBjet()
+            << ", quality=" << jet_itr.get_quality()
+            << ", JVT=" << jet_itr.get_JVT()
+            << ", JVTsf=" << jet_itr.get_JVTsf()
+            << ", MV2c20=" << jet_itr.get_MV2c20()
+            << ", MV2c10=" << jet_itr.get_MV2c10()
+            << ", SFw=" << jet_itr.get_SFw()
+            << ", nTrk=" << jet_itr.get_nTrk()
+            << endl;
         i++;
     }
 }
