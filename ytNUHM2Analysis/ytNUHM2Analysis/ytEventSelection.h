@@ -61,6 +61,7 @@ public:
     float filter_efficiency; //!
     float cross_section_kfactor_efficiency; //!
 
+    float tag_pt_threshold; //!
     //vector<double>        sum_of_weight_at_cut; //!
 
     yt_cutflows         *m_cutflow; //!
@@ -935,7 +936,8 @@ public:
     void set_isAF2Sim(bool b) { isAF2Sim = b; }
 
     void set_process(string s) { process = s; }
-    void set_luminosity(double d) { luminosity = d; }
+    void set_luminosity(float f) { luminosity = f; }
+    void set_tag_pt_threshold(float f) { tag_pt_threshold = f; }
 /*
     void set_cross_section(double d) { cross_section = d; }
     void set_k_factor(double d) { k_factor = d; }

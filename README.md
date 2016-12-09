@@ -1,6 +1,11 @@
 # NUHM2
 This is the framework for NUHM2 SR optimization.
 
+
+### v06. Put cut 7 and cut 9 in `if(!isSkim)`
+1. Put cut 7 and cut 9 in `if(!isSkim)`
+2. Add `tag_pt_threshold` in `ytEventSelection`
+
 ### v05. Change histogram names
 * Change histogram name from h_XXX_PRW to h_XXX_weighted
 * histograms are separated into data and mc.

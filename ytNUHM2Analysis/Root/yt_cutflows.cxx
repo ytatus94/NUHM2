@@ -66,7 +66,7 @@ yt_cutflows::yt_cutflows()
     m_Pileup->setProperty("DataScaleFactorUP", 1.0 / 1.0);
     m_Pileup->setProperty("DataScaleFactorDOWN", 1.0 / 1.23);
     if ( !m_Pileup->initialize().isSuccess() ) {
-        Error("In Begin()", "Fail to properly initialize the PRW. Exiting.");   
+        Error("In Begin()", "Fail to properly initialize the PRW. Exiting.");
     }
 
     // Dummy EventInfo object to manipulate later
@@ -545,7 +545,7 @@ bool yt_cutflows::pass_ee_2015_trigger_matching(vector<Electron> vec_elec,
             if (el_itr.get_flavor() == 11 &&
                 el_itr.get_pt() > 20000. &&
                 el_itr.get_trigMatch_2e12_lhloose_L12EM10VH() == true) {
-                e_match++;  
+                e_match++;
             }
         }
         if (e_match >= 2)
@@ -669,7 +669,7 @@ bool yt_cutflows::pass_mumu_2015_trigger_matching(vector<Muon> vec_muon,
                     }
                 }
             }
-        }           
+        }
     }
     return pass;
 }
@@ -695,7 +695,7 @@ bool yt_cutflows::pass_mumu_2016_trigger_matching(vector<Muon> vec_muon,
                     pass = true;
                 }
             }
-        }           
+        }
     }
     return pass;
 }

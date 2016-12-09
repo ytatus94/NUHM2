@@ -974,9 +974,11 @@ EL::StatusCode ytEventSelection::execute ()
     m_cutflow->update(Bad_muon, cut6);
     if (!cut6) return EL::StatusCode::SUCCESS;
 
-    bool cut7  = m_cutflow->pass_at_least_one_jet_passes_jet_OR(vec_baseline_jets); // use baseline jets
-    m_cutflow->update(At_least_one_jet_passes_jet_OR, cut7);
-    if (!cut7) return EL::StatusCode::SUCCESS;
+    if (!isSkim) {
+        bool cut7  = m_cutflow->pass_at_least_one_jet_passes_jet_OR(vec_baseline_jets); // use baseline jets
+        m_cutflow->update(At_least_one_jet_passes_jet_OR, cut7);
+        if (!cut7) return EL::StatusCode::SUCCESS;
+    }
 
     bool cut8  = m_cutflow->pass_bad_jet(vec_jets); // we have to use the raw jet objects (vec_jets) at this step.
     m_cutflow->update(Bad_jet, cut8);
@@ -993,10 +995,11 @@ EL::StatusCode ytEventSelection::execute ()
     // JVT cut applied after OR and jet quality
     fill_JVT_jets(vec_OR_jets);
 
-    bool cut9  = m_cutflow->pass_at_least_one_signal_jet(vec_JVT_jets);
-    m_cutflow->update(At_least_one_signal_jet, cut9);
-    if (!cut9) return EL::StatusCode::SUCCESS;
-
+    if (!isSkim) {
+        bool cut9  = m_cutflow->pass_at_least_one_signal_jet(vec_JVT_jets);
+        m_cutflow->update(At_least_one_signal_jet, cut9);
+        if (!cut9) return EL::StatusCode::SUCCESS;
+    }
 
     bool cut10 = m_cutflow->pass_cosmic_muon_veto(vec_OR_muon);
     m_cutflow->update(Cosmic_muons_veto, cut10);
