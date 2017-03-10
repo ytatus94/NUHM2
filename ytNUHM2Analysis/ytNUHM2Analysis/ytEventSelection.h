@@ -17,6 +17,7 @@
 #include "ytNUHM2Analysis/Leptons.h"
 #include "ytNUHM2Analysis/Jet.h"
 #include "ytNUHM2Analysis/yt_cutflows.h"
+#include "ytNUHM2Analysis/yt_skim.h"
 #include "ytNUHM2Analysis/yt_optimization.h"
 //#include "ytNUHM2Analysis/yt_useful_functions.h"
 #include "ytNUHM2Analysis/DileptonTriggerWeight.h"
@@ -59,12 +60,13 @@ public:
     float cross_section; //!
     float k_factor; //!
     float filter_efficiency; //!
-    float cross_section_kfactor_efficiency; //!
+    float cross_section_kfactor_efficiency; //! unit: pb
 
     float tag_pt_threshold; //!
     //vector<double>        sum_of_weight_at_cut; //!
 
     yt_cutflows         *m_cutflow; //!
+    yt_skim             *m_skim; //!
     yt_optimization     *m_optimization; //!
 
     SUSY::CrossSectionDB    *m_XsecDB; //!
@@ -91,7 +93,6 @@ public:
     vector<Muon>        vec_signal_muon; //!
     vector<Lepton>      vec_signal_lept; //!
     vector<Jet>         vec_signal_jets; //!
-
 
     // variables that don't get filled at submission time should be
     // protected from being send from the submission node to the worker
@@ -599,6 +600,21 @@ public:
     TH1F *h_NLepts_weighted; //!
     TH1F *h_NJets_weighted; //!
 
+    TH1F *h_AvgMu_OSee; //!
+    TH1F *h_AvgMu_OSmumu; //!
+    TH1F *h_AvgMu_OSee_weighted; //!
+    TH1F *h_AvgMu_OSmumu_weighted; //!
+
+    TH1F *h_baseline_OSee_mll; //!
+    TH1F *h_baseline_OSmumu_mll; //!
+    TH1F *h_baseline_OSee_mll_weighted; //!
+    TH1F *h_baseline_OSmumu_mll_weighted; //!
+
+    TH1F *h_signal_OSee_mll; //!
+    TH1F *h_signal_OSmumu_mll; //!
+    TH1F *h_signal_OSee_mll_weighted; //!
+    TH1F *h_signal_OSmumu_mll_weighted; //!
+
     // Canvas
     TCanvas *c_Nvtx; //!
     TCanvas *c_AvgMu; //!
@@ -932,6 +948,7 @@ public:
     void set_isMC(bool b) { isMC = b; }
     void set_isData(bool b) { isData = b; }
     void set_isSkim(bool b) { isSkim = b; }
+    void set_isOptimization(bool b) { isOptimization = b; }
     void set_isFullSim(bool b) { isFullSim = b; }
     void set_isAF2Sim(bool b) { isAF2Sim = b; }
 
