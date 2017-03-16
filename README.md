@@ -2,6 +2,30 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v08. Modify the code for optimization.
+1. `LinkDef.h`: Add `DileptonTriggerWeight.h`
+2. `ytEventSelection.h`:
+   * Comment `yt_skim` related part
+   * Comment the weighted histograms
+   * Comment the canvas
+   * Add `set_derivation_stat_weights()`
+3. `yt_optimization.h`: Arrange the order of codes.
+4. `run_bkg_samples.sh` and `run_signal_samples.sh`: Add optimization in the script.
+5. `yt_useful_functions.cxx`: Use `SetPtEtaPhiM()` for the muon and define mu mass
+6. `yt_cutflows.cxx`: Comment `pileupwgh`
+7. `yt_optimization.cxx`:
+   * Uncomment `h_derivation_stat_weights`
+   * Use GeV for pT, met, meff
+8. `cutflow.cxx`:
+   * Add `isCutflow` and `isOptimization` flag
+   * Change `submitDir` based on the flag
+   * Use `merged_all_data.root`
+9. `ytEventSelection.cxx`:
+   * Comment the skim related part, weighted histograms, `derivation_stat_weights` and the part to make plots
+   * The Xsec relation calculationis are separated into signal and bkg. And correct the value if the sample doesn't be found.
+   * The Nvtx, AvgMu, NLeps, Njets, mll histograms are recalculated using the correct weight.
+
+
 ### v07. Add histograms of AvgMu and mll.
 1. `yt_cutflows.h`: Add 3 methods:
    * `get_mc_random_event_number()`

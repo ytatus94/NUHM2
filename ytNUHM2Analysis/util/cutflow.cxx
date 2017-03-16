@@ -32,6 +32,9 @@ int main( int argc, char* argv[] ) {
     bool isMC = false;
     bool isData = false;
 
+    bool isCutflow = true;
+    bool isOptimization = false;
+
     string process;
 
     bool use_Condor = false;
@@ -51,6 +54,9 @@ int main( int argc, char* argv[] ) {
             isMC = true;
         else if (strcmp(key, "isData") == 0)
             isData = true;
+        // Check SR optimization
+        else if (strcmp(key, "optimization") == 0)
+            isOptimization = true;
         // Choose samples to run.
         else if (strcmp(key, "4topSM") == 0)
             process = "4topSM";
@@ -196,7 +202,36 @@ int main( int argc, char* argv[] ) {
             use_PROOF = true;
     }
 
+    if (isCutflow && !isOptimization)
+        printf("Running cutflow for %s\n", isMC ? process.c_str() : "Data");
+    else if (isOptimization)
+        printf("Running SR optimization for %s\n", isMC ? process.c_str() : "Data");
+    cout << "process = " << process << endl;
+
     printf("isMC = %s, isData = %s\n", isMC ? "true" : "false", isData ? "true" : "false");
+
+    if (isMC && !process.empty()) {
+        if (process == "bkg")
+            cout << "process = " << bkg_sample << endl;
+        else
+            cout << "process = " << process << endl;
+    }
+
+    if (isMC) {
+        if (isCutflow && !isOptimization)
+            submitDir = "cutflow_MC_" + process;
+        else if (isOptimization)
+            submitDir = "optimization_MC_" + process;
+        if (process == "bkg")
+            submitDir += "_" + string(bkg_sample);
+    }
+    else if (isData) {
+        if (isCutflow && !isOptimization)
+            submitDir = "cutflow_Data";
+        else if (isOptimization)
+            submitDir = "optimization_Data";
+    }
+    cout << "submitDir = " << submitDir << endl;
 
     if (use_Condor) {
         printf("Submit jobs to CondorDriver...\n");
@@ -210,21 +245,6 @@ int main( int argc, char* argv[] ) {
     else {
         printf("Submit jobs to DirectDriver...\n");
     }
-
-    if (isMC && !process.empty()) {
-        cout << "process = " << process << endl;
-        if (process == "bkg")
-            cout << "bkg sample =" << bkg_sample << endl;
-    }
-
-    if (isMC) {
-        submitDir = "cutflow_MC_" + process;
-        if (process == "bkg")
-            submitDir += "_" + string(bkg_sample);
-    }
-    else if (isData)
-        submitDir = "cutflow_Data";
-    cout << "submitDir = " << submitDir << endl;    
 
     // Construct the samples to run on:
     SH::SampleHandler sh;
@@ -448,8 +468,8 @@ int main( int argc, char* argv[] ) {
         cout << "Read Data files..." << endl;
         inputFilePath = "/raid05/users/shen/Ximo_ntuples/v44/Data"; // no slash (/) at the end.
         //SH::ScanDir().scan(sh, inputFilePath); // Get all datasets in inputFilePath
-        //SH::ScanDir().filePattern("merged_all_data.root").scan(sh, inputFilePath); // Get specific root file
-        SH::ScanDir().samplePattern("user.jpoveda.t0789_v44.*.physics_Main.DAOD_SUSY2.*").scan(sh, inputFilePath); // Get all root files in this dataset
+        SH::ScanDir().filePattern("merged_all_data.root").scan(sh, inputFilePath); // Get specific root file
+        //SH::ScanDir().samplePattern("user.jpoveda.t0789_v44.*.physics_Main.DAOD_SUSY2.*").scan(sh, inputFilePath); // Get all root files in this dataset
     }
 
     // Set the name of the input TTree.
@@ -458,6 +478,25 @@ int main( int argc, char* argv[] ) {
     // Print what we found:
     sh.print();
 
+    //
+    // Get DerivationStat_Weights from input files
+    //
+    double derivation_stat_weights = 0;
+    SH::Sample *sample = sh.at(sh.size() - 1); // Because we only have one dataset at here
+    // cout << "sample name=" << sample->name() << endl; // dataset name
+    // cout << "numFiles()=" << sample->numFiles() << endl; // number of root files in dataset
+    for (unsigned int i = 0; i < sample->numFiles() ; i++) {
+        string fileName = sample->fileName(i); // this returns file://root file name and path
+        string remove = "file://"; // need to remove "file://" part
+        string::size_type find_remove_part = fileName.find(remove);
+        if (find_remove_part != string::npos)
+            fileName.erase(find_remove_part, remove.length()); // now contains root file name and path only
+        //cout << "fileName(" << i << ")=" << fileName << endl;
+        TFile *file = new TFile(fileName.c_str());
+        TH1D *h1 = (TH1D *)file->Get("DerivationStat_Weights");
+        derivation_stat_weights += h1->GetBinContent(1);
+    }
+    // cout << "DerivationStat_Weights=" << derivation_stat_weights << endl;
     // Get the dataset name
     string dataset_name = sh.at(0)->fileName(0);
     //int index_of_DAOD_SUSY2 = dataset_name.find("DAOD_SUSY2.");
@@ -483,15 +522,22 @@ int main( int argc, char* argv[] ) {
     alg->set_isMC(isMC);
     alg->set_isData(isData);
     alg->set_isSkim(false);
+    alg->set_isOptimization(isOptimization);
     alg->set_isFullSim(isFullSim);
     alg->set_isAF2Sim(isAF2Sim);
+    alg->set_process(process);
+    alg->set_tag_pt_threshold(25000.);
+    alg->set_derivation_stat_weights(derivation_stat_weights);
     if (isMC && !process.empty()) {
         if (process != "bkg")
             alg->set_process(process);
         else
             alg->set_process(string(bkg_sample));
     }
-        
+
+    const double luminosity = 36.5; // unit: 1/fb 2015+2016
+    alg->set_luminosity(luminosity);
+
     if (isData)
         alg->set_process(process);
     //alg->set_derivation_stat_weights(derivation_stat_weights);

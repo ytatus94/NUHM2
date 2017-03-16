@@ -1,49 +1,49 @@
 #!/bin/bash
-cutflow isMC 4topSM
-cutflow isMC Zee
-cutflow isMC Zmumu
-cutflow isMC ttbar
-cutflow isMC Wplusenu
-cutflow isMC Wplusmunu
-cutflow isMC Wplustaunu
-cutflow isMC Wminusenu
-cutflow isMC Wminusmunu
-cutflow isMC Wminustaunu
-cutflow isMC Ztautau
-cutflow isMC ttW_Np0
-cutflow isMC ttW_Np1
-cutflow isMC ttW_Np2
-cutflow isMC ttee_Np0
-cutflow isMC ttee_Np1
-cutflow isMC ttmumu_Np0
-cutflow isMC ttmumu_Np1
-cutflow isMC tttautau_Np0
-cutflow isMC tttautau_Np1
-cutflow isMC ttbarWW
-cutflow isMC 3top_SM
-cutflow isMC llll
-cutflow isMC lllvSFMinus
-cutflow isMC lllvOFMinus
-cutflow isMC lllvSFPlus
-cutflow isMC lllvOFPlus
-cutflow isMC llvvjj_ss_EW4
-cutflow isMC llvvjj_ss_EW6
-cutflow isMC llvvjj_EW6
-cutflow isMC lllljj_EW6
-cutflow isMC ggllll
-cutflow isMC ZZZ_6l0v
-cutflow isMC ZZZ_4l2v
-cutflow isMC ZZZ_2l4v
-cutflow isMC llvv
-cutflow isMC ggllvv
-cutflow isMC WqqZll
-cutflow isMC ZqqZll
-cutflow isMC singletop_tchan_lept_top
-cutflow isMC singletop_tchan_lept_antitop
-cutflow isMC Wt_inclusive_top
-cutflow isMC Wt_inclusive_antitop
-cutflow isMC Wt_dilepton_top
-cutflow isMC Wt_dilepton_antitop
-cutflow isMC ttbarHT6c_1k_hdamp172p5
-cutflow isMC ttbarHT1k_1k5_hdamp172p5
-cutflow isMC ttbarHT1k5_hdamp172p5_no
+cutflow isMC optimization 4topSM
+cutflow isMC optimization Zee
+cutflow isMC optimization Zmumu
+cutflow isMC optimization ttbar
+cutflow isMC optimization Wplusenu
+cutflow isMC optimization Wplusmunu
+cutflow isMC optimization Wplustaunu
+cutflow isMC optimization Wminusenu
+cutflow isMC optimization Wminusmunu
+cutflow isMC optimization Wminustaunu
+cutflow isMC optimization Ztautau
+cutflow isMC optimization ttW_Np0
+cutflow isMC optimization ttW_Np1
+cutflow isMC optimization ttW_Np2
+cutflow isMC optimization ttee_Np0
+cutflow isMC optimization ttee_Np1
+cutflow isMC optimization ttmumu_Np0
+cutflow isMC optimization ttmumu_Np1
+cutflow isMC optimization tttautau_Np0
+cutflow isMC optimization tttautau_Np1
+cutflow isMC optimization ttbarWW
+cutflow isMC optimization 3top_SM
+cutflow isMC optimization llll
+cutflow isMC optimization lllvSFMinus
+cutflow isMC optimization lllvOFMinus
+cutflow isMC optimization lllvSFPlus
+cutflow isMC optimization lllvOFPlus
+cutflow isMC optimization llvvjj_ss_EW4
+cutflow isMC optimization llvvjj_ss_EW6
+cutflow isMC optimization llvvjj_EW6
+cutflow isMC optimization lllljj_EW6
+cutflow isMC optimization ggllll
+cutflow isMC optimization ZZZ_6l0v
+cutflow isMC optimization ZZZ_4l2v
+cutflow isMC optimization ZZZ_2l4v
+cutflow isMC optimization llvv
+cutflow isMC optimization ggllvv
+cutflow isMC optimization WqqZll
+cutflow isMC optimization ZqqZll
+cutflow isMC optimization singletop_tchan_lept_top
+cutflow isMC optimization singletop_tchan_lept_antitop
+cutflow isMC optimization Wt_inclusive_top
+cutflow isMC optimization Wt_inclusive_antitop
+cutflow isMC optimization Wt_dilepton_top
+cutflow isMC optimization Wt_dilepton_antitop
+cutflow isMC optimization ttbarHT6c_1k_hdamp172p5
+cutflow isMC optimization ttbarHT1k_1k5_hdamp172p5
+cutflow isMC optimization ttbarHT1k5_hdamp172p5_no

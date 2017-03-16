@@ -157,7 +157,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
     // Set bin contents
     //h_derivation_stat_weights->SetBinContent(1, derivation_stat_weights);
     //cout << "derivation_stat_weights=" << derivation_stat_weights << endl;
-    //h_derivation_stat_weights->Fill(0.5, derivation_stat_weights);
+    h_derivation_stat_weights->Fill(1, derivation_stat_weights);
     h_cross_section->SetBinContent(1, cross_section);
     h_k_factor->SetBinContent(1, k_factor);
     h_filter_efficiency->SetBinContent(1, filter_efficiency);
@@ -200,7 +200,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             //cout << "*bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt] << endl;
             int nbjets = 0;
             for (auto & bjet_itr : vec_signal_bjet) {
-                if (bjet_itr.get_pt() >= bjet_pt_cuts[i_bjet_pt])
+                if (bjet_itr.get_pt() / 1000. >= bjet_pt_cuts[i_bjet_pt]) // in GeV
                     nbjets++;
             }
             // Number of b-jet requirement
@@ -217,7 +217,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                     //cout << "***jets_pt_cuts=" << jets_pt_cuts[i_jets_pt] << endl;
                     int njets = 0;
                     for (auto & jet_itr : vec_signal_jets) {
-                        if (jet_itr.get_pt() >= jets_pt_cuts[i_jets_pt])
+                        if (jet_itr.get_pt() / 1000. >= jets_pt_cuts[i_jets_pt]) // in GeV
                             njets++;
                     }
                     // Number of jet requirement
@@ -228,7 +228,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                         // MET requirement
                         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
                             //cout << "*****met_cuts=" << met_cuts[i_met] << endl;
-                            if (met <= met_cuts[i_met])
+                            if (met / 1000. <= met_cuts[i_met]) // in GeV
                                 continue;
                             // Meff requirement
                             for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
@@ -255,7 +255,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                               * sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0])
                                               * sizeof(met_cuts) / sizeof(met_cuts[0])
                                               * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                if (meff <= meff_cuts[i_meff])
+                                if (meff / 1000. <= meff_cuts[i_meff]) // in GeV
                                     continue;
                                 else {
                                     h_yields->AddBinContent(bin);

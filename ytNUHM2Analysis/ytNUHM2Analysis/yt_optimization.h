@@ -6,16 +6,16 @@
 #include <TTree.h>
 #include <TH1.h>
 
+#include "ytNUHM2Analysis/Leptons.h"
+#include "ytNUHM2Analysis/Jet.h"
+#include "ytNUHM2Analysis/yt_useful_functions.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <iomanip>
 #include <algorithm>
 using namespace std;
-
-#include "ytNUHM2Analysis/Leptons.h"
-#include "ytNUHM2Analysis/Jet.h"
-#include "ytNUHM2Analysis/yt_useful_functions.h"
 
 class yt_optimization
 {
@@ -29,10 +29,11 @@ public:
 
     double  derivation_stat_weights;
 
-    float   cross_section;
-    float   k_factor;
-    float   filter_efficiency;
-    float   cross_section_kfactor_efficiency;
+    float luminosity;
+    float cross_section;
+    float k_factor;
+    float filter_efficiency;
+    float cross_section_kfactor_efficiency;
 
     // Weights
     float event_weight;
@@ -110,21 +111,17 @@ public:
 
     void set_isMC(bool b) { isMC = b; }
     void set_isData(bool b) { isData = b; }
-
     void set_process(string s) { process = s; }
-
-    //void set_luminosity(double d) { luminosity = d; }
-    void set_cross_section(double d) { cross_section = d; }
-    void set_k_factor(double d) { k_factor = d; }
-    void set_filter_efficiency(double d) { filter_efficiency = d; }
-    void set_cross_section_kfactor_efficiency(double d) { cross_section_kfactor_efficiency = d; }
+    void set_luminosity(float f) { luminosity = f; }
+    void set_cross_section(float f) { cross_section = f; }
+    void set_k_factor(float f) { k_factor = f; }
+    void set_filter_efficiency(float f) { filter_efficiency = f; }
+    void set_cross_section_kfactor_efficiency(float f) { cross_section_kfactor_efficiency = f; }
     void set_derivation_stat_weights(double d) { derivation_stat_weights = d; h_derivation_stat_weights->SetBinContent(1, derivation_stat_weights); }
-
     void set_event_weight(double d) { event_weight = d; }
+    void set_pileup_weight(double d) { pileup_weight = d; }
     void set_lepton_weight(double d) { lepton_weight = d; }
     void set_jet_weight(double d) { jet_weight = d; }
-    void set_pileup_weight(double d) { pileup_weight = d; }
-
     void set_met(double d) { met = d; }
 
     void reset_vectors();
@@ -136,8 +133,8 @@ public:
                                   int cut_jet_pt, int cut_n_jet,
                                   int cut_met, int cut_meff,
                                   float weight);
-    void get_events_survived();
-    void get_events_survived_weighted();
+    // void get_events_survived();
+    // void get_events_survived_weighted();
 
     void debug_print();
 

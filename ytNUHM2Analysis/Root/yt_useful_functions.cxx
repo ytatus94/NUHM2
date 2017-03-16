@@ -47,9 +47,20 @@ double calculate_mll(vector<Lepton> leptons)
     if (leptons.size() < 2)
         return -999.;
 
+    float Mu_Mass = 105.6583715;
+
     TLorentzVector tlv_lept_0, tlv_lept_1;
-    tlv_lept_0.SetPtEtaPhiM(leptons.at(0).get_pt(), leptons.at(0).get_eta(), leptons.at(0).get_phi(), leptons.at(0).get_M());
-    tlv_lept_1.SetPtEtaPhiM(leptons.at(1).get_pt(), leptons.at(1).get_eta(), leptons.at(1).get_phi(), leptons.at(1).get_M());
+
+    if (leptons.at(0).get_flavor() == 11) // electron
+        tlv_lept_0.SetPtEtaPhiE(leptons.at(0).get_pt(), leptons.at(0).get_eta(), leptons.at(0).get_phi(), leptons.at(0).get_E());
+    else if (leptons.at(0).get_flavor() == 13) // muon
+        tlv_lept_0.SetPtEtaPhiM(leptons.at(0).get_pt(), leptons.at(0).get_eta(), leptons.at(0).get_phi(), Mu_Mass);
+
+    if (leptons.at(1).get_flavor() == 11) // electron
+        tlv_lept_1.SetPtEtaPhiE(leptons.at(1).get_pt(), leptons.at(1).get_eta(), leptons.at(1).get_phi(), leptons.at(1).get_E());
+    else if (leptons.at(1).get_flavor() == 13) // muon
+        tlv_lept_1.SetPtEtaPhiM(leptons.at(1).get_pt(), leptons.at(1).get_eta(), leptons.at(1).get_phi(), Mu_Mass);
+
     double mll = (tlv_lept_0 + tlv_lept_1).M();
     return mll;
 }

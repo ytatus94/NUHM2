@@ -17,7 +17,7 @@
 #include "ytNUHM2Analysis/Leptons.h"
 #include "ytNUHM2Analysis/Jet.h"
 #include "ytNUHM2Analysis/yt_cutflows.h"
-#include "ytNUHM2Analysis/yt_skim.h"
+//#include "ytNUHM2Analysis/yt_skim.h"
 #include "ytNUHM2Analysis/yt_optimization.h"
 //#include "ytNUHM2Analysis/yt_useful_functions.h"
 #include "ytNUHM2Analysis/DileptonTriggerWeight.h"
@@ -54,7 +54,7 @@ public:
     // user defined variables
     string process;
 
-    double derivation_stat_weights; //!
+    double derivation_stat_weights;
 
     float luminosity;
     float cross_section; //!
@@ -66,7 +66,7 @@ public:
     //vector<double>        sum_of_weight_at_cut; //!
 
     yt_cutflows         *m_cutflow; //!
-    yt_skim             *m_skim; //!
+    //yt_skim             *m_skim; //!
     yt_optimization     *m_optimization; //!
 
     SUSY::CrossSectionDB    *m_XsecDB; //!
@@ -595,31 +595,31 @@ public:
     TH1F *h_NLepts; //!
     TH1F *h_NJets; //!
 
-    TH1F *h_Nvtx_weighted; //!
-    TH1F *h_AvgMu_weighted; //!
-    TH1F *h_NLepts_weighted; //!
-    TH1F *h_NJets_weighted; //!
+    // TH1F *h_Nvtx_weighted; //!
+    // TH1F *h_AvgMu_weighted; //!
+    // TH1F *h_NLepts_weighted; //!
+    // TH1F *h_NJets_weighted; //!
 
     TH1F *h_AvgMu_OSee; //!
     TH1F *h_AvgMu_OSmumu; //!
-    TH1F *h_AvgMu_OSee_weighted; //!
-    TH1F *h_AvgMu_OSmumu_weighted; //!
+    // TH1F *h_AvgMu_OSee_weighted; //!
+    // TH1F *h_AvgMu_OSmumu_weighted; //!
 
     TH1F *h_baseline_OSee_mll; //!
     TH1F *h_baseline_OSmumu_mll; //!
-    TH1F *h_baseline_OSee_mll_weighted; //!
-    TH1F *h_baseline_OSmumu_mll_weighted; //!
+    // TH1F *h_baseline_OSee_mll_weighted; //!
+    // TH1F *h_baseline_OSmumu_mll_weighted; //!
 
     TH1F *h_signal_OSee_mll; //!
     TH1F *h_signal_OSmumu_mll; //!
-    TH1F *h_signal_OSee_mll_weighted; //!
-    TH1F *h_signal_OSmumu_mll_weighted; //!
+    // TH1F *h_signal_OSee_mll_weighted; //!
+    // TH1F *h_signal_OSmumu_mll_weighted; //!
 
     // Canvas
-    TCanvas *c_Nvtx; //!
-    TCanvas *c_AvgMu; //!
-    TCanvas *c_NLepts; //!
-    TCanvas *c_NJets; //!
+    //TCanvas *c_Nvtx; //!
+    //TCanvas *c_AvgMu; //!
+    //TCanvas *c_NLepts; //!
+    //TCanvas *c_NJets; //!
 
     // this is a standard constructor
     ytEventSelection ();
@@ -955,6 +955,7 @@ public:
     void set_process(string s) { process = s; }
     void set_luminosity(float f) { luminosity = f; }
     void set_tag_pt_threshold(float f) { tag_pt_threshold = f; }
+    void set_derivation_stat_weights(double d) { derivation_stat_weights = d; }
 /*
     void set_cross_section(double d) { cross_section = d; }
     void set_k_factor(double d) { k_factor = d; }
@@ -972,13 +973,13 @@ public:
     double calculate_weight(double event_weight, double PRW_weight, vector<Electron> elec, vector<Muon> muon, vector<Jet> jets);
     void update(int cut, bool passed, double weight);
     void debug_sum_of_weight_print();
-*/
+
     // plots
     void make_plots_Nvtx();
     void make_plots_AvgMu();
     void make_plots_NLepts();
     void make_plots_NJets();
-
+*/
     // this is needed to distribute the algorithm to the workers
     ClassDef(ytEventSelection, 1);
 };

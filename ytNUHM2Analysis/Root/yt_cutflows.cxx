@@ -154,7 +154,7 @@ int yt_cutflows::get_mc_random_event_number(bool isData, bool isMC,
     bool mu_dependent = true;
     m_Pileup->apply(*eventInfo, mu_dependent);
     // example to retrieve decoration:
-    float pileupwgh = eventInfo->auxdata<float>("PileupWeight");
+    //float pileupwgh = eventInfo->auxdata<float>("PileupWeight");
     //pileupwgh = eventInfo->auxdata<float>("PileupWeight");
 /*
     // NEW: Systematic Variations
