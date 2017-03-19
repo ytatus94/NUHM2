@@ -2,11 +2,9 @@
 This is the framework for NUHM2 SR optimization.
 
 
-### v10. Comment skim part
-
-
 ### v09. Cutflow agree
 1. `ytEventSelection.cxx`: Use `PRWrandomRunNumber` instead of using `random_run_number`
+2. Change the comment style about skim part
 
 
 ### v08. Modify the code for optimization.
