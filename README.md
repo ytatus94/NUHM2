@@ -2,6 +2,13 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v11. New script to merge the input and modify script to run signal and background.
+1. `merge_bkg_samples.py`: New script
+2. `run_bkg_samples.sh`: Re-direct output
+3. `run_signal_samples.sh`: Re-direct output
+4. `cutflow.cxx`: Change the input path
+
+
 ### v10. Use mu20_mu8noL1 trigger
 1. `ytEventSelection.cxx`: Use `mu20_mu8noL1` for v44 (not `mu22_mu8noL1`)
 2. `yt_cutflows.cxx`: Use `mu20_mu8noL1`
