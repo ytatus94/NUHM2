@@ -972,11 +972,13 @@ EL::StatusCode ytEventSelection::execute ()
     sort(vec_baseline_lept.begin(), vec_baseline_lept.end(), sort_descending_Pt<Lepton>);
 
     int random_run_number = -1;
+    random_run_number = PRWrandomRunNumber;
+/*
     random_run_number = m_cutflow->get_mc_random_event_number(isData, isMC,
                                                               EventNumber, ChannelNumber,
                                                               AvgMu, EventWeight, //PRWWeight,
                                                               LB, RunNb);
-
+*/
     //cout << "*** EventNumber=" << EventNumber << endl;
     //cout << "ytEventSelection AvgMu=" << AvgMu << endl;
     //cout << "ytEventSelection PRWWeight=" << PRWWeight << endl;
@@ -1125,33 +1127,33 @@ EL::StatusCode ytEventSelection::execute ()
     baseline_weight = ID_weight(vec_baseline_elec, false) * ID_weight(vec_baseline_muon) * jets_weight(vec_signal_jets);
     signal_weight = ID_weight(vec_signal_elec, true) * Iso_weight(vec_signal_elec) * ID_weight(vec_signal_muon) * Iso_weight(vec_signal_muon) * jets_weight(vec_signal_jets);
 
-    //if (isSkim) {
-        //cout << "Doing skim at here..." << endl;
-        // Setting
-        // m_skim->set_isMC(isMC);
-        // m_skim->set_isData(isData);
-        // m_skim->set_process(process);
-        // m_skim->set_luminosity(luminosity);
-        // m_skim->set_cross_section(cross_section);
-        // m_skim->set_k_factor(k_factor);
-        // m_skim->set_filter_efficiency(filter_efficiency);
-        // m_skim->set_cross_section_kfactor_efficiency(cross_section_kfactor_efficiency);
-        // m_skim->set_event_weight_sum(derivation_stat_weights);
-        // m_skim->set_event_weight(EventWeight);
-        // m_skim->set_pileup_weight(pileup_weight /*PRWWeight*/);
-        // m_skim->set_baseline_weight(baseline_weight);
-        // m_skim->set_signal_weight(signal_weight);
-        // if (isData)
-        //     m_skim->set_run_number(RunNb);
-        // else if (isMC)
-        //     m_skim->set_run_number(random_run_number /*PRWrandomRunNumber*/);
-        // m_skim_set_new_AvgMu(m_cutflow->get_AvgMu());
-        // m_skim->set_tag_pt_threshold(tag_pt_threshold);
-        // Do skim
-        // m_skim->execute(vec_elec, vec_muon, vec_lept, vec_jets,
-        //                vec_baseline_elec, vec_baseline_muon, vec_baseline_lept, vec_baseline_jets,
-        //                vec_signal_elec, vec_signal_muon, vec_signal_lept, vec_signal_jets);
-    //}
+    // if (isSkim) {
+    //     cout << "Doing skim at here..." << endl;
+    //     Setting
+    //     m_skim->set_isMC(isMC);
+    //     m_skim->set_isData(isData);
+    //     m_skim->set_process(process);
+    //     m_skim->set_luminosity(luminosity);
+    //     m_skim->set_cross_section(cross_section);
+    //     m_skim->set_k_factor(k_factor);
+    //     m_skim->set_filter_efficiency(filter_efficiency);
+    //     m_skim->set_cross_section_kfactor_efficiency(cross_section_kfactor_efficiency);
+    //     m_skim->set_event_weight_sum(derivation_stat_weights);
+    //     m_skim->set_event_weight(EventWeight);
+    //     m_skim->set_pileup_weight(pileup_weight /*PRWWeight*/);
+    //     m_skim->set_baseline_weight(baseline_weight);
+    //     m_skim->set_signal_weight(signal_weight);
+    //     if (isData)
+    //         m_skim->set_run_number(RunNb);
+    //     else if (isMC)
+    //         m_skim->set_run_number(random_run_number /*PRWrandomRunNumber*/);
+    //     m_skim_set_new_AvgMu(m_cutflow->get_AvgMu());
+    //     m_skim->set_tag_pt_threshold(tag_pt_threshold);
+    //     Do skim
+    //     m_skim->execute(vec_elec, vec_muon, vec_lept, vec_jets,
+    //                    vec_baseline_elec, vec_baseline_muon, vec_baseline_lept, vec_baseline_jets,
+    //                    vec_signal_elec, vec_signal_muon, vec_signal_lept, vec_signal_jets);
+    // }
 
     bool cut12 = m_cutflow->pass_at_least_two_signal_leptons_greater_than_20GeV(vec_signal_lept);
     m_cutflow->update(At_least_two_signal_leptons_greater_than_20GeV, cut12);

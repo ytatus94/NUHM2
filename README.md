@@ -2,6 +2,13 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v10. Comment skim part
+
+
+### v09. Cutflow agree
+1. `ytEventSelection.cxx`: Use `PRWrandomRunNumber` instead of using `random_run_number`
+
+
 ### v08. Modify the code for optimization.
 1. `LinkDef.h`: Add `DileptonTriggerWeight.h`
 2. `ytEventSelection.h`:
