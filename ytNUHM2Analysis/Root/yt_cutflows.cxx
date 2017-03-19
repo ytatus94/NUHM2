@@ -227,12 +227,12 @@ bool yt_cutflows::pass_2015_trigger(bool HLT_2e12_lhloose_L12EM10VH, bool HLT_e1
     return pass;
 }
 
-bool yt_cutflows::pass_2016_trigger(bool HLT_2e17_lhvloose_nod0, bool HLT_e17_lhloose_nod0_mu14, bool HLT_mu22_mu8noL1, bool HLT_xe100_mht_L1XE50, float Etmiss_TST_Et)
+bool yt_cutflows::pass_2016_trigger(bool HLT_2e17_lhvloose_nod0, bool HLT_e17_lhloose_nod0_mu14, bool HLT_mu20_mu8noL1, bool HLT_xe100_mht_L1XE50, float Etmiss_TST_Et)
 {
     bool pass = false;
     if (HLT_2e17_lhvloose_nod0 ||
         HLT_e17_lhloose_nod0_mu14 ||
-        HLT_mu22_mu8noL1)
+        HLT_mu20_mu8noL1)
         pass = true;
     if (HLT_xe100_mht_L1XE50 && Etmiss_TST_Et > 250000.) // only for MET > 250 GeV
         pass = true;
@@ -701,7 +701,7 @@ bool yt_cutflows::pass_mumu_2016_trigger_matching(vector<Muon> vec_muon,
                     mu2_itr.get_flavor() == 13 &&
                     mu2_itr.get_pt() > 10000. &&
                     mu1_itr.get_index() != mu2_itr.get_index() &&
-                    mu1_itr.get_trigMatchPair_mu22_mu8noL1(mu2_itr.get_index()) == true) {
+                    mu1_itr.get_trigMatchPair_mu20_mu8noL1(mu2_itr.get_index()) == true) {
                     pass = true;
                 }
             }

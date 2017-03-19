@@ -2,6 +2,12 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v10. Use mu20_mu8noL1 trigger
+1. `ytEventSelection.cxx`: Use `mu20_mu8noL1` for v44 (not `mu22_mu8noL1`)
+2. `yt_cutflows.cxx`: Use `mu20_mu8noL1`
+3. The cutflow results agree
+
+
 ### v09. Cutflow agree
 1. `ytEventSelection.cxx`: Use `PRWrandomRunNumber` instead of using `random_run_number`
 2. Change the comment style about skim part

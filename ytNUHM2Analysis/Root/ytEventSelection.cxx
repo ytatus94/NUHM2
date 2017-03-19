@@ -1030,7 +1030,7 @@ EL::StatusCode ytEventSelection::execute ()
 
     bool cut4  = m_cutflow->pass_trigger(isData, isMC, RunNb, random_run_number /*PRWrandomRunNumber*/,
                                          HLT_2e12_lhloose_L12EM10VH, HLT_e17_lhloose_mu14, HLT_mu18_mu8noL1, HLT_xe70,
-                                         HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu22_mu8noL1, HLT_xe100_mht_L1XE50,
+                                         HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu20_mu8noL1, HLT_xe100_mht_L1XE50,
                                          Etmiss_TST_Et);
     m_cutflow->update(Trigger, cut4);
     if (!cut4) return EL::StatusCode::SUCCESS;
@@ -1200,7 +1200,7 @@ EL::StatusCode ytEventSelection::execute ()
 
     bool ee_cut2 = m_cutflow->pass_trigger_matching(isData, isMC, RunNb, random_run_number /*PRWrandomRunNumber*/, vec_signal_elec, vec_signal_muon,
                                                     HLT_2e12_lhloose_L12EM10VH, HLT_e17_lhloose_mu14, HLT_mu18_mu8noL1, HLT_xe70,
-                                                    HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu22_mu8noL1, HLT_xe100_mht_L1XE50,
+                                                    HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu20_mu8noL1, HLT_xe100_mht_L1XE50,
                                                     Etmiss_TST_Et);
     if (ee_cut1 == 1 && ee_cut2) {
         m_cutflow->update(ee_trigger_matching, ee_cut2);
@@ -1229,7 +1229,7 @@ EL::StatusCode ytEventSelection::execute ()
 
     bool emu_cut2 = m_cutflow->pass_trigger_matching(isData, isMC, RunNb, random_run_number /*PRWrandomRunNumber*/, vec_signal_elec, vec_signal_muon,
                                                      HLT_2e12_lhloose_L12EM10VH, HLT_e17_lhloose_mu14, HLT_mu18_mu8noL1, HLT_xe70,
-                                                     HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu22_mu8noL1, HLT_xe100_mht_L1XE50,
+                                                     HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu20_mu8noL1, HLT_xe100_mht_L1XE50,
                                                      Etmiss_TST_Et);
     if (emu_cut1 == 2 && emu_cut2) {
         m_cutflow->update(emu_trigger_matching, emu_cut2);
@@ -1258,7 +1258,7 @@ EL::StatusCode ytEventSelection::execute ()
 
     bool mumu_cut2 = m_cutflow->pass_trigger_matching(isData, isMC, RunNb, random_run_number /*PRWrandomRunNumber*/, vec_signal_elec, vec_signal_muon,
                                                       HLT_2e12_lhloose_L12EM10VH, HLT_e17_lhloose_mu14, HLT_mu18_mu8noL1, HLT_xe70,
-                                                      HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu22_mu8noL1, HLT_xe100_mht_L1XE50,
+                                                      HLT_2e17_lhvloose_nod0, HLT_e17_lhloose_nod0_mu14, HLT_mu20_mu8noL1, HLT_xe100_mht_L1XE50,
                                                       Etmiss_TST_Et);
     if (mumu_cut1 == 3 && mumu_cut2) {
         m_cutflow->update(mumu_trigger_matching, mumu_cut2);
