@@ -2,6 +2,12 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v13. Change the weight calculation
+1. `ytEventSelection.cxx`: pass luminosity to optimization
+2. `yt_optimization.cxx`: Change the calculation of weight
+3. `ytOptimization_plots.C`: Comment the weight calculation because the root file contains correct weight now.
+
+
 ### v12. Fix typo
 1. `run_bkg_samples.sh`: Use `lllvjj_EW6` (not `llvvjj_EW6`)
 2. `cutflow.cxx`: Use `lllvjj_EW6` (not `llvvjj_EW6`)

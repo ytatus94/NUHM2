@@ -1321,6 +1321,7 @@ EL::StatusCode ytEventSelection::execute ()
         cout << "dilepton_trigger_weight=" << dilepton_trigger_weight << endl;
         */
 
+        m_optimization->set_luminosity(luminosity);
         m_optimization->set_cross_section(cross_section);
         m_optimization->set_k_factor(k_factor);
         m_optimization->set_filter_efficiency(filter_efficiency);

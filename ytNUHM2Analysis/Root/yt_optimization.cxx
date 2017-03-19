@@ -164,7 +164,8 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
     h_cross_section_kfactor_efficiency->SetBinContent(1, cross_section_kfactor_efficiency);
 
     // Fill the histogram for distributions after pre-selection
-    double weight = event_weight * lepton_weight * jet_weight * pileup_weight;
+    //double weight = event_weight * lepton_weight * jet_weight * pileup_weight;
+    double weight = luminosity * cross_section_kfactor_efficiency * 1000. * event_weight * pileup_weight / derivation_stat_weights;
 
     Ht = calculate_Ht(vec_signal_lept, vec_signal_jets);
     meff = calculate_Meff(Ht, met);

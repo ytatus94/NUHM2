@@ -92,7 +92,7 @@ string background_files[48] = {
     "optimization_MC_lllljj_EW6.root"
 };
 
-void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_strong.root", int luminosity = 35, float bkg_uncertainty = 0.3)
+void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_strong.root", int luminosity = 36.5, float bkg_uncertainty = 0.3)
 {
     TFile *f_signal = TFile::Open((path + signal_file).c_str());
     // TH1F *h_signal_derivation_stat_weights = (TH1F *)f_signal->Get("h_derivation_stat_weights");
@@ -191,15 +191,18 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
                             // Meff requirement
                             for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
-                                int n_signal = h_signal_yield_weighted->GetBinContent(bin) 
-                                             * luminosity * signal_cross_section_kfactor_efficiency * 1000. / signal_derivation_stat_weights;
+                                // int n_signal = h_signal_yield_weighted->GetBinContent(bin) 
+                                //              * luminosity * signal_cross_section_kfactor_efficiency * 1000. / signal_derivation_stat_weights;
+                                int n_signal = h_signal_yield_weighted->GetBinContent(bin);
                                 // Loop over background
                                 int n_background = 0;
                                 for (int i = 0; i < n_background_files; i++) {
-                                    n_background += h_background_yield_weighted[i]->GetBinContent(bin)
-                                                  * luminosity * background_cross_section_kfactor_efficiency[i] * 1000. / background_derivation_stat_weights[i]; 
+                                    // n_background += h_background_yield_weighted[i]->GetBinContent(bin)
+                                    //               * luminosity * background_cross_section_kfactor_efficiency[i] * 1000. / background_derivation_stat_weights[i];
+                                    n_background += h_background_yield_weighted[i]->GetBinContent(bin);
                                 }
                                 float significance = 0;
+                                cout << "n_signal=" << n_signal << ", n_background=" << n_background << endl;
                                 if (n_signal >= 2 &&
                                     n_background >= 1) {
                                     significance = RooStats::NumberCountingUtils::BinomialExpZ(n_signal, n_background, bkg_uncertainty);
