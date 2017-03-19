@@ -2,6 +2,11 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v12. Fix typo
+1. `run_bkg_samples.sh`: Use `lllvjj_EW6` (not `llvvjj_EW6`)
+2. `cutflow.cxx`: Use `lllvjj_EW6` (not `llvvjj_EW6`)
+
+
 ### v11. New script to merge the input and modify script to run signal and background.
 1. `merge_bkg_samples.py`: New script
 2. `run_bkg_samples.sh`: Re-direct output

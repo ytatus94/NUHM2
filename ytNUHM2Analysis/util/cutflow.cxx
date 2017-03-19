@@ -155,7 +155,7 @@ int main( int argc, char* argv[] ) {
         else if (strcmp(key, "llvvjj_ss_EW6") == 0)
             process = "llvvjj_ss_EW6";
         else if (strcmp(key, "lllvjj_EW6") == 0)
-            process = "llvvjj_EW6";
+            process = "lllvjj_EW6";
         else if (strcmp(key, "lllljj_EW6") == 0)
             process = "lllljj_EW6";
         else if (strcmp(key, "ggllll") == 0)

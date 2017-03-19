@@ -48,7 +48,7 @@ cutflow isMC optimization lllvSFPlus > optimization_lllvSFPlus.log 2>&1 &
 cutflow isMC optimization lllvOFPlus > optimization_lllvOFPlus.log 2>&1 &
 cutflow isMC optimization llvvjj_ss_EW4 > optimization_llvvjj_ss_EW4.log 2>&1 &
 cutflow isMC optimization llvvjj_ss_EW6 > optimization_llvvjj_ss_EW6.log 2>&1 &
-cutflow isMC optimization llvvjj_EW6 > optimization_llvvjj_EW6.log 2>&1 &
+cutflow isMC optimization lllvjj_EW6 > optimization_lllvjj_EW6.log 2>&1 &
 cutflow isMC optimization lllljj_EW6 > optimization_lllljj_EW6.log 2>&1 &
 cutflow isMC optimization ggllll > optimization_ggllll.log 2>&1 &
 cutflow isMC optimization ZZZ_6l0v > optimization_ZZZ_6l0v.log 2>&1 &
