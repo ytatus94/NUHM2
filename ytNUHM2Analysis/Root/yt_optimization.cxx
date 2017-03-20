@@ -3,15 +3,15 @@
 
 
 
-const int yt_optimization::n_lept_cuts[5] = {2, 3, 4, 5, 6};
-const int yt_optimization::n_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
-const int yt_optimization::n_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-const int yt_optimization::bjet_pt_cuts[9] = {20, 25, 30, 35, 40, 50, 70, 100, 150};
-const int yt_optimization::jets_pt_cuts[9] = {20, 25, 30, 35, 40, 50, 70, 100, 150};
-const int yt_optimization::met_cuts[10] = {0, 50, 100, 150, 200, 250, 300, 350, 400, 500};
-const int yt_optimization::meff_cuts[21] = {
-    0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 
-    1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000
+const float yt_optimization::N_lept_cuts[5] = {2, 3, 4, 5, 6};
+const float yt_optimization::N_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
+const float yt_optimization::N_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+const float yt_optimization::bjet_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
+const float yt_optimization::jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
+const float yt_optimization::met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
+const float yt_optimization::meff_cuts[21] = {
+    0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000.,
+    1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800., 1900., 2000.
 };
 
 
@@ -37,21 +37,32 @@ yt_optimization::yt_optimization()
 
     // leafs in tree
     // For distributions
-    met = 0;
+    // met = 0;
     Ht = 0;
-    meff = 0;
+    // meff = 0;
     lepton1_pT = 0;
     lepton2_pT = 0;
     jet1_pT = 0;
     jet2_pT = 0;
+
+    n_leptons = 0.;
+    n_bjets = 0.;
+    bjet_pT.clear();
+    n_jets = 0.;
+    jet_pT.clear();
+    met = 0.;
+    meff = 0.;
+    met_over_meff = 0.;
+
     // Optimization cut bins
-    n_leptons_bin = 0;
-    n_jets_bin = 0;
-    n_bjets_bin = 0;
-    jet_pt_bin = 0;
-    bjet_pt_bin = 0;
-    met_bin = 0;
-    meff_bin = 0;
+    n_N_lept_cuts_bins = 0;
+    n_N_bjet_cuts_bins = 0;
+    n_N_jets_cuts_bins = 0;
+    n_bjet_pt_cuts_bins = 0;
+    n_jets_pt_cuts_bins = 0;
+    n_met_cuts_bins = 0;
+    n_meff_cuts_bins = 0;
+
     events_survived = 0;
     events_survived_weighted = 0;
 }
@@ -79,13 +90,22 @@ void yt_optimization::initialize()
     output_tree = new TTree("output_tree", "Optimization output tree");
 
     // Building the new branches
-    output_tree->Branch("met",          &met);
+    // output_tree->Branch("met",          &met);
     output_tree->Branch("Ht",           &Ht);
-    output_tree->Branch("meff",         &meff);
+    // output_tree->Branch("meff",         &meff);
     output_tree->Branch("lepton1_pT",   &lepton1_pT);
     output_tree->Branch("lepton2_pT",   &lepton2_pT);
     output_tree->Branch("jet1_pT",      &jet1_pT);
     output_tree->Branch("jet2_pT",      &jet2_pT);
+
+    output_tree->Branch("n_leptons",    &n_leptons);
+    output_tree->Branch("n_bjets",      &n_bjets);
+    output_tree->Branch("bjet_pT",      &bjet_pT);
+    output_tree->Branch("n_jets",       &n_jets);
+    output_tree->Branch("jet_pT",       &jet_pT);
+    output_tree->Branch("met",          &met);
+    output_tree->Branch("meff",         &meff);
+    output_tree->Branch("met_over_meff",&met_over_meff);
 /*
     output_tree->Branch("n_leptons_bin",    &n_leptons_bin);
     output_tree->Branch("n_jets_bin",       &n_jets_bin);
@@ -108,9 +128,12 @@ void yt_optimization::initialize()
     h_filter_efficiency->Sumw2();
     h_cross_section_kfactor_efficiency->Sumw2();
 
+    h_derivation_stat_weights->SetBinContent(1, derivation_stat_weights);
+
     h_met       = new TH1F("h_met", "MET;MET [GeV];Events", 100, 0, 1000);
     h_Ht        = new TH1F("h_Ht", "Ht;Ht [GeV];Events", 300, 0, 3000);
     h_meff      = new TH1F("h_meff", "Meff;M_{eff} [GeV];Events", 300, 0, 3000);
+    h_met_over_meff = new TH1F("h_met_over_meff", "MET/M_{eff};MET/M_{eff};Events", 100, 0, 1);
     h_NLeptons  = new TH1F("h_NLeptons", "NLeptons;N_{leptons};Events", 10, 0, 10);
     h_NJets     = new TH1F("h_NJets", "NJets;N_{jets};Events", 20, 0, 20);
     h_Nbjets    = new TH1F("h_Nbjets", "Nbjets;N_{b-jets};Events", 20, 0, 20);
@@ -131,9 +154,9 @@ void yt_optimization::initialize()
     h_jet2_pT->Sumw2();
 
     // calculate total bins
-    int nbins = sizeof(n_lept_cuts) / sizeof(n_lept_cuts[0]) *
-                sizeof(n_bjet_cuts) / sizeof(n_bjet_cuts[0]) *
-                sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0]) *
+    int nbins = sizeof(N_lept_cuts) / sizeof(N_lept_cuts[0]) *
+                sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0]) *
+                sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0]) *
                 sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]) *
                 sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]) *
                 sizeof(met_cuts) / sizeof(met_cuts[0]) *
@@ -144,6 +167,26 @@ void yt_optimization::initialize()
 
     h_yields->Sumw2();
     h_yields_weighted->Sumw2();
+
+    this->set_binning_default();
+    n_N_lept_cuts_bins = m_N_lept_cuts_bins.size() - 1;
+    n_N_bjet_cuts_bins = m_N_bjet_cuts_bins.size() - 1;
+    n_N_jets_cuts_bins = m_N_jets_cuts_bins.size() - 1;
+    n_bjet_pt_cuts_bins = m_bjet_pt_cuts_bins.size() - 1;
+    n_jets_pt_cuts_bins = m_jets_pt_cuts_bins.size() - 1;
+    n_met_cuts_bins = m_met_cuts_bins.size() - 1;
+    n_meff_cuts_bins = m_meff_cuts_bins.size() - 1;
+
+    h_method2_yields = new TH3F("h_method2_yields", "yields;p_{T} [GeV];E_{T}^{miss} [GeV]; M_{eff} [GeV]",
+                                n_jets_pt_cuts_bins, &m_jets_pt_cuts_bins[0],
+                                n_met_cuts_bins, &m_met_cuts_bins[0],
+                                n_meff_cuts_bins, &m_meff_cuts_bins[0]);
+    h_method2_yields_weighted = new TH3F("h_method2_yields_weighted", "weighted yields;p_{T} [GeV];E_{T}^{miss} [GeV]; M_{eff} [GeV]",
+                                n_jets_pt_cuts_bins, &m_jets_pt_cuts_bins[0],
+                                n_met_cuts_bins, &m_met_cuts_bins[0],
+                                n_meff_cuts_bins, &m_meff_cuts_bins[0]);
+    h_method2_yields->Sumw2();
+    h_method2_yields_weighted->Sumw2();
 }
 
 
@@ -165,10 +208,19 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
 
     // Fill the histogram for distributions after pre-selection
     //double weight = event_weight * lepton_weight * jet_weight * pileup_weight;
-    double weight = luminosity * cross_section_kfactor_efficiency * 1000. * event_weight * pileup_weight / derivation_stat_weights;
+    double weight = luminosity * cross_section_kfactor_efficiency * 1000. * event_weight * lepton_weight * jet_weight * pileup_weight / derivation_stat_weights;
+    cout << "luminosity=" << luminosity
+        << ", cross_section_kfactor_efficiency=" << cross_section_kfactor_efficiency
+        << ", event_weight=" << event_weight
+        << ", lepton_weight=" << lepton_weight
+        << ", jet_weight=" << jet_weight
+        << ", pileup_weight=" << pileup_weight
+        << ", derivation_stat_weights=" << derivation_stat_weights
+        << endl;
 
     Ht = calculate_Ht(vec_signal_lept, vec_signal_jets);
     meff = calculate_Meff(Ht, met);
+    met_over_meff = met / meff;
 
     h_met->Fill(met / 1000., weight);
     h_Ht->Fill(Ht / 1000., weight);
@@ -189,8 +241,9 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
     }
 
     if (vec_signal_bjet.size() > 0)
-    h_Nbjets->Fill(vec_signal_bjet.at(0).get_number(), weight);
-
+        h_Nbjets->Fill(vec_signal_bjet.at(0).get_number(), weight);
+/*
+    // Method 1
     // Number of lepton requirement
     for (unsigned int i_lept = 0; i_lept < sizeof(n_lept_cuts) / sizeof(n_lept_cuts[0]); i_lept++) {
         //cout << "n_lept_cuts=" << n_lept_cuts[i_lept] << endl;
@@ -264,6 +317,76 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                 }
                                 //cout << "bin=" << bin << endl;
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+*/
+
+    // Method 2
+    bool n_lept_cut_flag = false,
+         n_bjet_cut_flag = false,
+         n_jets_cut_flag = false;
+
+    if (vec_signal_lept.size() >= 3)
+        n_lept_cut_flag = true;
+    if (vec_signal_bjet.size() == 0)
+        n_bjet_cut_flag =  true;
+/*
+    if (vec_signal_bjet.size() >= 1) {
+        bool bjet_pt_cut_flag = true;
+        for (auto & bjet_itr : vec_signal_bjet) {
+            if (bjet_itr.get_pt() / 1000. < 20.)
+                bjet_pt_cut_flag = false;
+        }
+        if (bjet_pt_cuts_flag)
+            n_bjet_cut_flag = true;
+    }
+*/
+    if (vec_signal_jets.size() >= 4) {
+        n_jets_cut_flag = true;
+    }
+
+    if (n_lept_cut_flag &&
+        n_bjet_cut_flag &&
+        n_jets_cut_flag) {
+        cout << "pass n_lept_cut_flag, n_bjet_cut_flag, n_jets_cut_flag" << endl;
+        for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
+            bool jets_pt_cut_flag = true; // set default to true
+            for (auto & jet_itr : vec_signal_jets) {
+                if (jet_itr.get_pt() / 1000. < jets_pt_cuts[i_jets_pt])
+                    jets_pt_cut_flag = false;
+            }
+            if (jets_pt_cut_flag) {
+                cout << "pass jets_pt_cut_flag" << endl;
+                for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
+                    bool met_cut_flag = false;
+                    if (met / 1000. > met_cuts[i_met])
+                        met_cut_flag = true;
+                    for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
+                        bool meff_cut_flag = false;
+                        if (meff / 1000. > meff_cuts[i_meff])
+                            meff_cut_flag = true;
+                        if (met_cut_flag && meff_cut_flag) {
+                            cout << "pass met_cut_flag and meff_cut_flag" << endl;
+                            float old_yields = h_method2_yields->GetBinContent(i_jets_pt + 1,
+                                                                               i_met + 1,
+                                                                               i_meff + 1);
+                            cout << "old_yields=" << old_yields << endl;
+                            h_method2_yields->SetBinContent(i_jets_pt + 1,
+                                                            i_met + 1,
+                                                            i_meff + 1,
+                                                            old_yields + 1);
+                            float old_weighted_yields = h_method2_yields_weighted->GetBinContent(i_jets_pt + 1,
+                                                                                                 i_met + 1,
+                                                                                                 i_meff + 1);
+                            cout << "old_weighted_yields=" << old_weighted_yields << endl;
+                            h_method2_yields_weighted->SetBinContent(i_jets_pt + 1,
+                                                                     i_met + 1,
+                                                                     i_meff + 1,
+                                                                     old_weighted_yields + 1 * weight);
                         }
                     }
                 }
@@ -379,4 +502,17 @@ void yt_optimization::debug_print()
     cout << "filter_efficiency=" << filter_efficiency << endl;
     cout << "cross_section_kfactor_efficiency=" << cross_section_kfactor_efficiency << endl;
     cout << "met=" << met << endl;
+}
+
+
+
+void yt_optimization::set_binning_default()
+{
+    m_N_lept_cuts_bins = vector<float> (N_lept_cuts, N_lept_cuts + sizeof(N_lept_cuts) / sizeof(float));
+    m_N_bjet_cuts_bins = vector<float> (N_bjet_cuts, N_bjet_cuts + sizeof(N_bjet_cuts) / sizeof(float));
+    m_N_jets_cuts_bins = vector<float> (N_jets_cuts, N_jets_cuts + sizeof(N_jets_cuts) / sizeof(float));
+    m_bjet_pt_cuts_bins = vector<float> (bjet_pt_cuts, bjet_pt_cuts + sizeof(bjet_pt_cuts) / sizeof(float));
+    m_jets_pt_cuts_bins = vector<float> (jets_pt_cuts, jets_pt_cuts + sizeof(jets_pt_cuts) / sizeof(float));
+    m_met_cuts_bins = vector<float> (met_cuts, met_cuts + sizeof(met_cuts) / sizeof(float));
+    m_meff_cuts_bins = vector<float> (meff_cuts, meff_cuts + sizeof(meff_cuts) / sizeof(float));
 }

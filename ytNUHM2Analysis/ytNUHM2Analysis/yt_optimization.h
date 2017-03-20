@@ -5,6 +5,8 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1.h>
+#include <TH2.h>
+#include <TH3.h>
 
 #include "ytNUHM2Analysis/Leptons.h"
 #include "ytNUHM2Analysis/Jet.h"
@@ -60,6 +62,7 @@ public:
     TH1F    *h_met;
     TH1F    *h_Ht;
     TH1F    *h_meff;
+    TH1F    *h_met_over_meff;
     TH1F    *h_NLeptons;
     TH1F    *h_NJets;
     TH1F    *h_Nbjets;
@@ -71,35 +74,57 @@ public:
     TH1F    *h_yields;
     TH1F    *h_yields_weighted;
 
+    TH3F    *h_method2_yields;
+    TH3F    *h_method2_yields_weighted;
+
     // leafs in tree
     // For distributions
-    float   met;
+    // float   met;
     float   Ht;
-    float   meff;
+    // float   meff;
     float   lepton1_pT;
     float   lepton2_pT;
     float   jet1_pT;
     float   jet2_pT;
-    // Optimization cut bins
-    int     n_leptons_bin;
-    int     n_jets_bin;
-    int     n_bjets_bin;
-    int     jet_pt_bin;
-    int     bjet_pt_bin;
-    int     met_bin;
-    int     meff_bin;
-    int     events_survived;
-    int     events_survived_weighted;
 
+    int             n_leptons;
+    int             n_bjets;
+    vector<float>   bjet_pT;
+    int             n_jets;
+    vector<float>   jet_pT;
+    float           met;
+    float           meff;
+    float           met_over_meff;
 
     // Cuts
-    static const int n_lept_cuts[5];
-    static const int n_bjet_cuts[6];
-    static const int n_jets_cuts[9];
-    static const int bjet_pt_cuts[9];
-    static const int jets_pt_cuts[9];
-    static const int met_cuts[10];
-    static const int meff_cuts[21];
+    static const float N_lept_cuts[5];
+    static const float N_bjet_cuts[6];
+    static const float N_jets_cuts[9];
+    static const float bjet_pt_cuts[9];
+    static const float jets_pt_cuts[9];
+    static const float met_cuts[10];
+    static const float meff_cuts[21];
+
+    // Binning
+    vector<float> m_N_lept_cuts_bins;
+    vector<float> m_N_bjet_cuts_bins;
+    vector<float> m_N_jets_cuts_bins;
+    vector<float> m_bjet_pt_cuts_bins;
+    vector<float> m_jets_pt_cuts_bins;
+    vector<float> m_met_cuts_bins;
+    vector<float> m_meff_cuts_bins;
+
+    // Optimization cut bins
+    int n_N_lept_cuts_bins;
+    int n_N_bjet_cuts_bins;
+    int n_N_jets_cuts_bins;
+    int n_bjet_pt_cuts_bins;
+    int n_jets_pt_cuts_bins;
+    int n_met_cuts_bins;
+    int n_meff_cuts_bins;
+
+    int events_survived;
+    int events_survived_weighted;
 
 public:
     yt_optimization();
@@ -117,12 +142,14 @@ public:
     void set_k_factor(float f) { k_factor = f; }
     void set_filter_efficiency(float f) { filter_efficiency = f; }
     void set_cross_section_kfactor_efficiency(float f) { cross_section_kfactor_efficiency = f; }
-    void set_derivation_stat_weights(double d) { derivation_stat_weights = d; h_derivation_stat_weights->SetBinContent(1, derivation_stat_weights); }
+    // void set_derivation_stat_weights(double d) { derivation_stat_weights = d; h_derivation_stat_weights->SetBinContent(1, derivation_stat_weights); }
+    void set_derivation_stat_weights(double d) { derivation_stat_weights = d; }
     void set_event_weight(double d) { event_weight = d; }
     void set_pileup_weight(double d) { pileup_weight = d; }
     void set_lepton_weight(double d) { lepton_weight = d; }
     void set_jet_weight(double d) { jet_weight = d; }
     void set_met(double d) { met = d; }
+    void set_binning_default();
 
     void reset_vectors();
     void copy_vectors(vector<Electron> elec, vector<Muon> muon, vector<Lepton> lept, vector<Jet> jets);

@@ -2,6 +2,28 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v14. Add new method 2
+1. `ytEventSelection.cxx`: `derivation_stat_weights` becomes an input of optimization
+2. `yt_optimization.h`:
+   * Add TH1F histogram `h_met_over_meff`
+   * Add TH3F histograms `h_method2_yields` and `h_method2_yields_weighted`
+   * Add new TTree leafs
+   * Change the cuts type form `const int` to `const float` because TH3F uses `float`
+   * Add binnings vector.
+   * Don't fill histogram in `set_derivation_stat_weights()`
+   * Add new method `set_binning_default()`
+3. `yt_optimization.cxx`:
+   * Change the cuts type form `const int` to `const float`.
+   * Initialize new leafs to 0 or empty the vector.
+   * Add new branches for new leafs.
+   * Fill `h_derivation_stat_weights` after it is created.
+   * Initialize new histograms `h_method2_yields`, `h_method2_yields_weighted`
+   * Correct the `weight` calculation.
+   * Calculate new variable `met_over_meff`
+   * Comment out method 1 and add method 2.
+   * Implement `set_binning_default()`
+
+
 ### v13. Change the weight calculation
 1. `ytEventSelection.cxx`: pass luminosity to optimization
 2. `yt_optimization.cxx`: Change the calculation of weight

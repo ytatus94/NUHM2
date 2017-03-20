@@ -579,6 +579,7 @@ EL::StatusCode ytEventSelection::initialize ()
         m_optimization->set_isMC(isMC);
         m_optimization->set_isData(isData);
         m_optimization->set_process(process);
+        m_optimization->set_derivation_stat_weights(derivation_stat_weights);
         m_optimization->initialize();
     }
 
@@ -1327,7 +1328,7 @@ EL::StatusCode ytEventSelection::execute ()
         m_optimization->set_filter_efficiency(filter_efficiency);
         m_optimization->set_cross_section_kfactor_efficiency(cross_section_kfactor_efficiency);
 
-        //m_optimization->set_derivation_stat_weights(derivation_stat_weights);
+        // m_optimization->set_derivation_stat_weights(derivation_stat_weights);
 
         m_optimization->set_event_weight(EventWeight);
         m_optimization->set_lepton_weight(lepton_weight * dilepton_trigger_weight);
@@ -1380,7 +1381,7 @@ EL::StatusCode ytEventSelection::finalize ()
         //m_skim->debug_print();
     //}
     if (isOptimization) {
-        m_optimization->set_derivation_stat_weights(derivation_stat_weights);
+        // m_optimization->set_derivation_stat_weights(derivation_stat_weights);
         m_optimization->finalize();
     }
 
