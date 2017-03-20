@@ -98,24 +98,25 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
     // TH1F *h_signal_derivation_stat_weights = (TH1F *)f_signal->Get("h_derivation_stat_weights");
     // TH1F *h_signal_cross_section_kfactor_efficiency = (TH1F *)f_signal->Get("h_cross_section_kfactor_efficiency");
     TH1F *h_signal_yield_weighted = (TH1F *)f_signal->Get("h_yields_weighted");
-    double signal_derivation_stat_weights = ((TH1F *)f_signal->Get("h_derivation_stat_weights"))->GetBinContent(1);
-    double signal_cross_section_kfactor_efficiency = ((TH1F *)f_signal->Get("h_cross_section_kfactor_efficiency"))->GetBinContent(1);
+    // double signal_derivation_stat_weights = ((TH1F *)f_signal->Get("h_derivation_stat_weights"))->GetBinContent(1);
+    // double signal_cross_section_kfactor_efficiency = ((TH1F *)f_signal->Get("h_cross_section_kfactor_efficiency"))->GetBinContent(1);
 
-    // double signal_cross_section_kfactor_efficiency = 0;
-    // if (signal_file == "optimization_MC_NUHM2_m12_300_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_300;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_350_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_350;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_400_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_400;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_500_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_500;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_600_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_600;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_700_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_700;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_800_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_800;
+    double signal_cross_section_kfactor_efficiency = 0;
+    if (signal_file == "optimization_MC_NUHM2_m12_300_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_300;
+    else if (signal_file == "optimization_MC_NUHM2_m12_350_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_350;
+    else if (signal_file == "optimization_MC_NUHM2_m12_400_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_400;
+    else if (signal_file == "optimization_MC_NUHM2_m12_500_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_500;
+    else if (signal_file == "optimization_MC_NUHM2_m12_600_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_600;
+    else if (signal_file == "optimization_MC_NUHM2_m12_700_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_700;
+    else if (signal_file == "optimization_MC_NUHM2_m12_800_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_800;
+    // cout << "signal_cross_section_kfactor_efficiency=" << signal_cross_section_kfactor_efficiency << endl;
 
     int n_background_files = sizeof(background_files) / sizeof(background_files[0]);
     // cout << "n_background_files=" << n_background_files << endl;
@@ -126,13 +127,14 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
     TH1F *h_background_yield_weighted[n_background_files];
     double background_derivation_stat_weights[n_background_files];
     double background_cross_section_kfactor_efficiency[n_background_files];
+
     for (int i = 0; i < n_background_files; i++) {
         f_background[i] = TFile::Open((path + background_files[i]).c_str());
         h_background_yield_weighted[i] = (TH1F *)f_background[i]->Get("h_yields_weighted");
         // TH1F *h_background_derivation_stat_weights = (TH1F *)f_background[i]->Get("h_derivation_stat_weights");
         // TH1F *h_background_cross_section_kfactor_efficiency = (TH1F *)f_background[i]->Get("h_cross_section_kfactor_efficiency");
-        background_derivation_stat_weights[i] = ((TH1F *)f_background[i]->Get("h_derivation_stat_weights"))->GetBinContent(1);
-        background_cross_section_kfactor_efficiency[i] = ((TH1F *)f_background[i]->Get("h_cross_section_kfactor_efficiency"))->GetBinContent(1);
+        // background_derivation_stat_weights[i] = ((TH1F *)f_background[i]->Get("h_derivation_stat_weights"))->GetBinContent(1);
+        // background_cross_section_kfactor_efficiency[i] = ((TH1F *)f_background[i]->Get("h_cross_section_kfactor_efficiency"))->GetBinContent(1);
     }
 
     
@@ -157,13 +159,14 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                 for (int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
                     // Number of jet requirement
                     for (int i_jets = 0; i_jets < sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0]); i_jets++) {
-                        cout << "bin=" << bin 
+                        cout << "***** bin=" << bin
                             << ", n_lept_cuts=" << n_lept_cuts[i_lept]
                             << ", bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt]
                             << ", n_bjet_cuts=" << n_bjet_cuts[i_bjet]
-                            << ", jets_pt_cuts=" << jets_pt_cuts[i_jets_pt]
                             << ", n_jets_cuts=" << n_jets_cuts[i_jets]
-                            << endl;
+                            << ", jets_pt_cuts=" << jets_pt_cuts[i_jets_pt]
+                            << ", ";
+                            // << endl;
 
                         stringstream bin_counter;
                         bin_counter << bin;
@@ -173,27 +176,34 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                         ss_n_lept_cuts << n_lept_cuts[i_lept];
                         ss_bjet_pt_cuts << bjet_pt_cuts[i_bjet_pt];
                         ss_n_bjet_cuts << n_bjet_cuts[i_bjet];
-                        ss_jets_pt_cuts << jets_pt_cuts[i_jets_pt];
                         ss_n_jets_cuts << n_jets_cuts[i_jets];
-                        string hist_title = "N_{l}=" + ss_n_lept_cuts.str()
-                                        + ", b-jet p_{T}=" + ss_bjet_pt_cuts.str()
-                                        + ", N_{b-jet}=" + ss_n_bjet_cuts.str()
-                                        + ", jet p_{T}=" + ss_jets_pt_cuts.str()
-                                        + ", N_{jet}=" + ss_n_jets_cuts.str();
+                        ss_jets_pt_cuts << jets_pt_cuts[i_jets_pt];
+                        string hist_title = "N_{l}>=" + ss_n_lept_cuts.str()
+                                        + ", b-jet p_{T}>=" + ss_bjet_pt_cuts.str()
+                                        + ", N_{b-jets}>=" + ss_n_bjet_cuts.str()
+                                        + ", N_{jets}>=" + ss_n_jets_cuts.str()
+                                        + ", p_{T, jets}>=" + ss_jets_pt_cuts.str();
+                        // cout << "hist_title=" << hist_title << endl;
 
                         int n_xbins = sizeof(met_cuts) / sizeof(met_cuts[0]) - 1;
                         int n_ybins = sizeof(meff_cuts) / sizeof(meff_cuts[0]) - 1;
                         // cout << "n_xbins=" << n_xbins << endl;
                         // cout << "n_ybins=" << n_ybins << endl;
-                        TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(), n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
+
+                        TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
+                                              n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
 
                         // MET requirement
                         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
                             // Meff requirement
                             for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
+                                cout << "met_cuts=" << met_cuts[i_met]
+                                    << ", meff_cuts=" << meff_cuts[i_meff]
+                                    << endl;
                                 // int n_signal = h_signal_yield_weighted->GetBinContent(bin) 
                                 //              * luminosity * signal_cross_section_kfactor_efficiency * 1000. / signal_derivation_stat_weights;
                                 int n_signal = h_signal_yield_weighted->GetBinContent(bin);
+
                                 // Loop over background
                                 int n_background = 0;
                                 for (int i = 0; i < n_background_files; i++) {
@@ -201,18 +211,23 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                                     //               * luminosity * background_cross_section_kfactor_efficiency[i] * 1000. / background_derivation_stat_weights[i];
                                     n_background += h_background_yield_weighted[i]->GetBinContent(bin);
                                 }
-                                float significance = 0;
                                 cout << "n_signal=" << n_signal << ", n_background=" << n_background << endl;
+
+                                float significance = 0;
                                 if (n_signal >= 2 &&
                                     n_background >= 1) {
                                     significance = RooStats::NumberCountingUtils::BinomialExpZ(n_signal, n_background, bkg_uncertainty);
+                                    if (significance < 0) // when n_background >> n_signal
+                                        significance = 0;
+                                    else if (significance > 100) // If ex: n_signal >> n_background then significance=inf
+                                        significance = 0;
                                 }
                                 else if (n_signal < 2)
                                     significance = -2;
                                 else if (n_background < 1)
                                     significance = -1;
 
-                                cout << "max_significance=" << max_significance << endl;
+                                cout << "significance=" << significance << ", max_significance=" << max_significance << endl;
 
                                 if (significance > max_significance) {
                                     max_significance = significance;
@@ -226,10 +241,6 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                                     best_cut_bin = bin;
                                 }
 
-                                cout << "met_cuts=" << met_cuts[i_met]
-                                    << ", meff_cuts=" << meff_cuts[i_meff]
-                                    << ", significance=" << significance
-                                    <<endl;
                                 // cout << "bin=" << bin
                                 //     << ", n_signal=" << n_signal
                                 //     << ", n_background=" << n_background
@@ -249,7 +260,9 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                             }
                         }
                         TCanvas *c1 = new TCanvas("c1", "c1");
+                        gPad->SetLeftMargin(0.12);
                         hist->SetStats(kFALSE);
+                        hist->GetYaxis()->SetTitleOffset(1.5);
                         hist->Draw("colz,text");
                         c1->SaveAs((hist_name + ".pdf").c_str());
                         c1->Close();

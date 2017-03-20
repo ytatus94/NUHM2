@@ -88,7 +88,7 @@ void yt_optimization::initialize()
 
     output_file = TFile::Open(filename.c_str(), "RECREATE");
     output_tree = new TTree("output_tree", "Optimization output tree");
-
+/*
     // Building the new branches
     // output_tree->Branch("met",          &met);
     output_tree->Branch("Ht",           &Ht);
@@ -109,7 +109,7 @@ void yt_optimization::initialize()
 
     output_tree->Branch("events_survived",   &events_survived);
     output_tree->Branch("events_survived_weighted", &events_survived_weighted);
-
+*/
     h_derivation_stat_weights           = new TH1F("h_derivation_stat_weights", "DerivationStat Weight", 2, 0, 2);
     h_cross_section                     = new TH1F("h_cross_section", "Cross section", 2, 0, 2);
     h_k_factor                          = new TH1F("h_k_factor", "k-factor", 2, 0, 2);
@@ -256,12 +256,11 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
     // meff is at above
     met_over_meff = met / meff;
 
-/*
     // Method 1
     // Number of lepton requirement
-    for (unsigned int i_lept = 0; i_lept < sizeof(n_lept_cuts) / sizeof(n_lept_cuts[0]); i_lept++) {
-        //cout << "n_lept_cuts=" << n_lept_cuts[i_lept] << endl;
-        if (static_cast<int>(vec_signal_lept.size()) < n_lept_cuts[i_lept])
+    for (unsigned int i_lept = 0; i_lept < sizeof(N_lept_cuts) / sizeof(N_lept_cuts[0]); i_lept++) {
+        //cout << "N_lept_cuts=" << N_lept_cuts[i_lept] << endl;
+        if (static_cast<int>(vec_signal_lept.size()) < N_lept_cuts[i_lept])
             continue;
         // b-jet pT requirement
         for (unsigned int i_bjet_pt = 0; i_bjet_pt < sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]); i_bjet_pt++) {
@@ -272,12 +271,12 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                     nbjets++;
             }
             // Number of b-jet requirement
-            for (unsigned int i_bjet = 0; i_bjet < sizeof(n_bjet_cuts) / sizeof(n_bjet_cuts[0]); i_bjet++) {
-                //cout << "**n_bjet_cuts=" << n_bjet_cuts[i_bjet] << endl;
-                if (n_bjet_cuts[i_bjet] > 0 &&
-                    nbjets < n_bjet_cuts[i_bjet])
+            for (unsigned int i_bjet = 0; i_bjet < sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0]); i_bjet++) {
+                //cout << "**N_bjet_cuts=" << N_bjet_cuts[i_bjet] << endl;
+                if (N_bjet_cuts[i_bjet] > 0 &&
+                    nbjets < N_bjet_cuts[i_bjet])
                     continue;
-                else if (n_bjet_cuts[i_bjet] == 0 &&
+                else if (N_bjet_cuts[i_bjet] == 0 &&
                          nbjets > 0)
                     continue;
                 // jet pT requirement
@@ -289,9 +288,9 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                             njets++;
                     }
                     // Number of jet requirement
-                    for (unsigned int i_jets = 0; i_jets < sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0]); i_jets++) {
-                        //cout << "****n_jets_cuts=" << n_jets_cuts[i_jets] << endl;
-                        if (njets < n_jets_cuts[i_jets])
+                    for (unsigned int i_jets = 0; i_jets < sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0]); i_jets++) {
+                        //cout << "****N_jets_cuts=" << N_jets_cuts[i_jets] << endl;
+                        if (njets < N_jets_cuts[i_jets])
                             continue;
                         // MET requirement
                         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
@@ -305,22 +304,22 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                 bin += i_met * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
                                 bin += i_jets * sizeof(met_cuts) / sizeof(met_cuts[0])
                                               * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_jets_pt * sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0])
+                                bin += i_jets_pt * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
                                                  * sizeof(met_cuts) / sizeof(met_cuts[0])
                                                  * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
                                 bin += i_bjet * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
-                                              * sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0])
+                                              * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
                                               * sizeof(met_cuts) / sizeof(met_cuts[0])
                                               * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_bjet_pt * sizeof(n_bjet_cuts) / sizeof(n_bjet_cuts[0])
+                                bin += i_bjet_pt * sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0])
                                                  * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
-                                                 * sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0])
+                                                 * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
                                                  * sizeof(met_cuts) / sizeof(met_cuts[0])
                                                  * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
                                 bin += i_lept * sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0])
-                                              * sizeof(n_bjet_cuts) / sizeof(n_bjet_cuts[0])
+                                              * sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0])
                                               * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
-                                              * sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0])
+                                              * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
                                               * sizeof(met_cuts) / sizeof(met_cuts[0])
                                               * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
                                 if (meff / 1000. <= meff_cuts[i_meff]) // in GeV
@@ -337,8 +336,8 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             }
         }
     }
-*/
 
+/*
     // Method 2
     bool n_lept_cut_flag = false,
          n_bjet_cut_flag = false,
@@ -348,7 +347,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
         n_lept_cut_flag = true;
     if (vec_signal_bjet.size() == 0)
         n_bjet_cut_flag =  true;
-/*
+//
     if (vec_signal_bjet.size() >= 1) {
         bool bjet_pt_cut_flag = true;
         for (auto & bjet_itr : vec_signal_bjet) {
@@ -358,7 +357,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
         if (bjet_pt_cuts_flag)
             n_bjet_cut_flag = true;
     }
-*/
+//
     if (vec_signal_jets.size() >= 4) {
         n_jets_cut_flag = true;
     }
@@ -413,7 +412,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             }
         }
     }
-
+*/
     // fill all new branches
     output_tree->Fill();
 }

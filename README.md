@@ -2,6 +2,23 @@
 This is the framework for NUHM2 SR optimization.
 
 
+
+### v16. Set unreasonable significance to 0
+1. `yt_optimization.cxx`:
+   * Comment out the branches to reduce root file size
+   * Change `n_lept_cuts` to `N_lept_cuts`
+   * Change `n_bjet_cuts` to `N_bjet_cuts`
+   * Change `n_jets_cuts` to `N_jets_cuts`
+   * Uncomment method 1 and comment method 2
+   * Use `signal_cross_section_kfactor_efficiency` value from SUSYTools.
+   * Modify `hist_title`.
+   * Comment unused `signal_derivation_stat_weights`, `signal_cross_section_kfactor_efficiency`,
+     `background_derivation_stat_weights`, and `background_cross_section_kfactor_efficiency`.
+   * Add some new couts
+   * Set significance to 0 if it is less then zero or reater then 100.
+   * Plot cosmatic
+
+
 ### v15. Add new script for method2
 1. `ytOptimization_plots_method2.C`: New script
 2. `ytOptimization_plots.C`: change the type of luminosity to `float`
