@@ -2,6 +2,15 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v15. Add new script for method2
+1. `ytOptimization_plots_method2.C`: New script
+2. `ytOptimization_plots.C`: change the type of luminosity to `float`
+3. `yt_optimization.cxx`:
+   * Remove unused branches
+   * Calculate `lepton1_pT`, `lepton2_pT`, `jet1_pT`, and `jet2_pT`
+   * Add some couts in method2 for loop
+
+
 ### v14. Add new method 2
 1. `ytEventSelection.cxx`: `derivation_stat_weights` becomes an input of optimization
 2. `yt_optimization.h`:

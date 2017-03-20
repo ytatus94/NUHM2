@@ -92,7 +92,7 @@ string background_files[48] = {
     "optimization_MC_lllljj_EW6.root"
 };
 
-void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_strong.root", int luminosity = 36.5, float bkg_uncertainty = 0.3)
+void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_strong.root", float luminosity = 36.5, float bkg_uncertainty = 0.3)
 {
     TFile *f_signal = TFile::Open((path + signal_file).c_str());
     // TH1F *h_signal_derivation_stat_weights = (TH1F *)f_signal->Get("h_derivation_stat_weights");
