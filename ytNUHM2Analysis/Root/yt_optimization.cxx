@@ -8,11 +8,19 @@ const float yt_optimization::N_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
 const float yt_optimization::N_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 const float yt_optimization::bjet_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
 const float yt_optimization::jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
-const float yt_optimization::met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
-const float yt_optimization::meff_cuts[21] = {
-    0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000.,
-    1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800., 1900., 2000.
-};
+// const float yt_optimization::met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
+// const float yt_optimization::meff_cuts[21] = {
+//     0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000.,
+//     1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800., 1900., 2000.
+// };
+const float yt_optimization::met_cuts[12] = {50., 75., 100., 125., 150., 175., 200., 250., 300., 350., 400., 500.};
+const float yt_optimization::meff_cuts[12] = {0., 500., 700., 900., 1100., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
+
+
+#define N_lepts 3
+#define N_bjets 0
+#define Bjet_pT 0
+#define N_jets 4
 
 
 
@@ -337,7 +345,6 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
         }
     }
 
-/*
     // Method 2
     bool n_lept_cut_flag = false,
          n_bjet_cut_flag = false,
@@ -345,20 +352,24 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
 
     if (vec_signal_lept.size() >= 3)
         n_lept_cut_flag = true;
-    if (vec_signal_bjet.size() == 0)
-        n_bjet_cut_flag =  true;
-//
-    if (vec_signal_bjet.size() >= 1) {
-        bool bjet_pt_cut_flag = true;
-        for (auto & bjet_itr : vec_signal_bjet) {
-            if (bjet_itr.get_pt() / 1000. < 20.)
-                bjet_pt_cut_flag = false;
-        }
-        if (bjet_pt_cuts_flag)
-            n_bjet_cut_flag = true;
+
+    if (N_bjets == 0) {
+        if (vec_signal_bjet.size() == 0)
+            n_bjet_cut_flag =  true;
     }
-//
-    if (vec_signal_jets.size() >= 4) {
+    else { // N_bjets > 0
+        if (vec_signal_bjet.size() >= N_bjets) {
+            bool bjet_pt_cut_flag = true;
+            for (auto & bjet_itr : vec_signal_bjet) {
+                if (bjet_itr.get_pt() / 1000. < Bjet_pT)
+                    bjet_pt_cut_flag = false;
+            }
+            if (bjet_pt_cut_flag)
+                n_bjet_cut_flag = true;
+        }
+    }
+
+    if (vec_signal_jets.size() >= N_jets) {
         n_jets_cut_flag = true;
     }
 
@@ -412,7 +423,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             }
         }
     }
-*/
+
     // fill all new branches
     output_tree->Fill();
 }

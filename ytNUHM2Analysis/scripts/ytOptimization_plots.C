@@ -15,11 +15,13 @@ const int n_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
 const int n_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 const int bjet_pt_cuts[9] = {20, 25, 30, 35, 40, 50, 70, 100, 150};
 const int jets_pt_cuts[9] = {20, 25, 30, 35, 40, 50, 70, 100, 150};
-const double met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
-const double meff_cuts[21] = {
-    0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 
-    1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800., 1900., 2000.
-};
+// const double met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
+// const double meff_cuts[21] = {
+//     0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 
+//     1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800., 1900., 2000.
+// };
+const float met_cuts[12] = {50., 75., 100., 125., 150., 175., 200., 250., 300., 350., 400., 500.};
+const float meff_cuts[12] = {0., 500., 700., 900., 1100., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
 
 string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170319/";
 
@@ -262,6 +264,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_400_st
                         TCanvas *c1 = new TCanvas("c1", "c1");
                         gPad->SetLeftMargin(0.12);
                         hist->SetStats(kFALSE);
+                        hist->GetXaxis()->SetNdivisions(110);
+                        hist->GetYaxis()->SetNdivisions(110);
                         hist->GetYaxis()->SetTitleOffset(1.5);
                         hist->Draw("colz,text");
                         c1->SaveAs((hist_name + ".pdf").c_str());

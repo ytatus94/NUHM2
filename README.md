@@ -2,6 +2,15 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v17. Modify method 2
+1. `yt_optimization.cxx`::
+   * Define constant `N_lepts`, `N_bjets`, `Bjet_pT`, and `N_jets`
+   * Use the above constant in method 2
+2. `ytOptimization_plots.C`: Plot cosmatic
+3. Use the sam MET and Meff as what Chris did in `yt_optimization.cxx`, `ytOptimization_plots.C`, 
+   and `ytOptimization_plots_method2.C`
+4. `yt_optimization.h`: Change the number of elements in MET and Meff arrays definition
+
 
 ### v16. Set unreasonable significance to 0
 1. `yt_optimization.cxx`:
@@ -10,6 +19,7 @@ This is the framework for NUHM2 SR optimization.
    * Change `n_bjet_cuts` to `N_bjet_cuts`
    * Change `n_jets_cuts` to `N_jets_cuts`
    * Uncomment method 1 and comment method 2
+2. `ytOptimization_plots.C`:
    * Use `signal_cross_section_kfactor_efficiency` value from SUSYTools.
    * Modify `hist_title`.
    * Comment unused `signal_derivation_stat_weights`, `signal_cross_section_kfactor_efficiency`,

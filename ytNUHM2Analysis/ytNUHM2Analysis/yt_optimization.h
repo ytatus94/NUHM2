@@ -102,8 +102,10 @@ public:
     static const float N_jets_cuts[9];
     static const float bjet_pt_cuts[9];
     static const float jets_pt_cuts[9];
-    static const float met_cuts[10];
-    static const float meff_cuts[21];
+    // static const float met_cuts[10];
+    // static const float meff_cuts[21];
+    static const float met_cuts[12];
+    static const float meff_cuts[12];
 
     // Binning
     vector<float> m_N_lept_cuts_bins;
