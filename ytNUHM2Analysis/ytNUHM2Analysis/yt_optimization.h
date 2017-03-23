@@ -29,9 +29,14 @@ public:
     // user defined variables
     string  process;
 
+    // event information
+    int  run_number;
+    long event_number;
+
     double  derivation_stat_weights;
 
     float luminosity;
+
     float cross_section;
     float k_factor;
     float filter_efficiency;
@@ -48,6 +53,7 @@ public:
     vector<Lepton>      vec_signal_lept;
     vector<Jet>         vec_signal_jets;
     vector<Jet>         vec_signal_bjet;
+    vector<int>         vec_N_bjet_pT_greater_than_some_value;
 
     // Declare the output
     TFile   *output_file;
@@ -79,9 +85,7 @@ public:
 
     // leafs in tree
     // For distributions
-    // float   met;
     float   Ht;
-    // float   meff;
     float   lepton1_pT;
     float   lepton2_pT;
     float   jet1_pT;
@@ -139,6 +143,8 @@ public:
     void set_isMC(bool b) { isMC = b; }
     void set_isData(bool b) { isData = b; }
     void set_process(string s) { process = s; }
+    void set_run_number(int i) { run_number = i; }
+    void set_event_number(long l) { event_number = l; }
     void set_luminosity(float f) { luminosity = f; }
     void set_cross_section(float f) { cross_section = f; }
     void set_k_factor(float f) { k_factor = f; }
@@ -156,6 +162,7 @@ public:
     void reset_vectors();
     void copy_vectors(vector<Electron> elec, vector<Muon> muon, vector<Lepton> lept, vector<Jet> jets);
     void fill_signal_bjets(vector<Jet> signal_jets);
+    void fill_Nbjets_pT();
 
     void apply_signal_region_cuts(int cut_n_leptons,
                                   int cut_bjets_pT, int cut_n_bjets,

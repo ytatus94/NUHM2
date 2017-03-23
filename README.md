@@ -2,6 +2,18 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v18. Add event number and run number information
+1. `ytEventSelection.cxx`: pass `EventNumber` and `RunNb` (or `random_run_number`) to optimization
+2. `yt_optimization.h`:
+   * Add `run_number`, `event_number` variable and `vec_N_bjet_pT_greater_than_some_value`.
+   * Add new methods `set_run_number()`, `set_event_number()`, and `fill_Nbjets_pT()`
+3. `yt_optimization.cxx`:
+   * Initialize `run_number`, `event_number`, and `luminosity` to zero.
+   * Cout `run_number` and `event_number`
+   * implement `fill_Nbjets_pT()`
+   * B-jet pT > b-jet pT cut (not >=)
+
+ 
 ### v17. Modify method 2
 1. `yt_optimization.cxx`::
    * Define constant `N_lepts`, `N_bjets`, `Bjet_pT`, and `N_jets`

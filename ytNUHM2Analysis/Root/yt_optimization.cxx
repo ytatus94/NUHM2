@@ -30,9 +30,14 @@ yt_optimization::yt_optimization()
     isData = false;
 
     process = "";
-    
+
+    run_number = 0;
+    event_number = 0;
+
     derivation_stat_weights = 0.;
-    
+
+    luminosity = 0;
+
     cross_section = 1.;
     k_factor = 1.;
     filter_efficiency = 1.;
@@ -45,9 +50,7 @@ yt_optimization::yt_optimization()
 
     // leafs in tree
     // For distributions
-    // met = 0;
     Ht = 0;
-    // meff = 0;
     lepton1_pT = 0;
     lepton2_pT = 0;
     jet1_pT = 0;
@@ -96,11 +99,9 @@ void yt_optimization::initialize()
 
     output_file = TFile::Open(filename.c_str(), "RECREATE");
     output_tree = new TTree("output_tree", "Optimization output tree");
-/*
+
     // Building the new branches
-    // output_tree->Branch("met",          &met);
     output_tree->Branch("Ht",           &Ht);
-    // output_tree->Branch("meff",         &meff);
     output_tree->Branch("lepton1_pT",   &lepton1_pT);
     output_tree->Branch("lepton2_pT",   &lepton2_pT);
     output_tree->Branch("jet1_pT",      &jet1_pT);
@@ -117,7 +118,7 @@ void yt_optimization::initialize()
 
     output_tree->Branch("events_survived",   &events_survived);
     output_tree->Branch("events_survived_weighted", &events_survived_weighted);
-*/
+
     h_derivation_stat_weights           = new TH1F("h_derivation_stat_weights", "DerivationStat Weight", 2, 0, 2);
     h_cross_section                     = new TH1F("h_cross_section", "Cross section", 2, 0, 2);
     h_k_factor                          = new TH1F("h_k_factor", "k-factor", 2, 0, 2);
@@ -195,9 +196,13 @@ void yt_optimization::initialize()
 
 void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<Lepton> lept, vector<Jet> jets)
 {
+    cout << "Run number=" << run_number
+        << ", Event number=" << event_number
+
     this->reset_vectors();
     this->copy_vectors(elec, muon, lept, jets);
     this->fill_signal_bjets(jets);
+    this->fill_Nbjets_pT();
 
     // Set bin contents
     //h_derivation_stat_weights->SetBinContent(1, derivation_stat_weights);
@@ -211,7 +216,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
     // Fill the histogram for distributions after pre-selection
     //double weight = event_weight * lepton_weight * jet_weight * pileup_weight;
     double weight = luminosity * cross_section_kfactor_efficiency * 1000. * event_weight * lepton_weight * jet_weight * pileup_weight / derivation_stat_weights;
-    cout << "luminosity=" << luminosity
+    cout << ", luminosity=" << luminosity
         << ", cross_section_kfactor_efficiency=" << cross_section_kfactor_efficiency
         << ", event_weight=" << event_weight
         << ", lepton_weight=" << lepton_weight
@@ -275,7 +280,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             //cout << "*bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt] << endl;
             int nbjets = 0;
             for (auto & bjet_itr : vec_signal_bjet) {
-                if (bjet_itr.get_pt() / 1000. >= bjet_pt_cuts[i_bjet_pt]) // in GeV
+                if (bjet_itr.get_pt() / 1000. > bjet_pt_cuts[i_bjet_pt]) // in GeV
                     nbjets++;
             }
             // Number of b-jet requirement
@@ -463,6 +468,7 @@ void yt_optimization::reset_vectors()
     vec_signal_lept.clear();
     vec_signal_jets.clear();
     vec_signal_bjet.clear();
+    vec_N_bjet_pT_greater_than_some_value.clear();
 }
 
 
@@ -482,6 +488,21 @@ void yt_optimization::fill_signal_bjets(vector<Jet> signal_jets)
     for (auto & signal_jets_itr : signal_jets) {
         if (signal_jets_itr.get_isBjet() == true)
             vec_signal_bjet.push_back(signal_jets_itr); 
+    }
+}
+
+
+
+void yt_optimization::fill_Nbjets_pT()
+{
+    for (int i= 0; i < sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]); i++) {
+        int count = 0;
+        // Count how many b-jets with pT > bjet_pt_cuts
+        for (auto & bjets_itr : vec_signal_bjet) {
+            if (bjets_itr.get_pt() / 1000. > bjet_pt_cuts[i])
+                count++;
+        }
+        vec_N_bjet_pT_greater_than_some_value[i] = count;
     }
 }
 
