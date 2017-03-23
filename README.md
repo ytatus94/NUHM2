@@ -2,6 +2,12 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v19. Modify method2
+1. `yt_optimization.cxx`:
+   * Modify the code when N_bjet > 0
+   * jet pT > jet pT cut
+
+
 ### v18. Add event number and run number information
 1. `ytEventSelection.cxx`: pass `EventNumber` and `RunNb` (or `random_run_number`) to optimization
 2. `yt_optimization.h`:

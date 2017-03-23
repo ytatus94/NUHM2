@@ -355,7 +355,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
          n_bjet_cut_flag = false,
          n_jets_cut_flag = false;
 
-    if (vec_signal_lept.size() >= 3)
+    if (vec_signal_lept.size() >= N_lepts)
         n_lept_cut_flag = true;
 
     if (N_bjets == 0) {
@@ -363,15 +363,14 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             n_bjet_cut_flag =  true;
     }
     else { // N_bjets > 0
-        if (vec_signal_bjet.size() >= N_bjets) {
-            bool bjet_pt_cut_flag = true;
-            for (auto & bjet_itr : vec_signal_bjet) {
-                if (bjet_itr.get_pt() / 1000. < Bjet_pT)
-                    bjet_pt_cut_flag = false;
-            }
-            if (bjet_pt_cut_flag)
-                n_bjet_cut_flag = true;
+        int index = 0;
+        for (int i = 0; i < sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]); i++ ) {
+            if (bjet_pt_cuts[i] == Bjet_pT)
+                index = i;
         }
+
+        if (vec_N_bjet_pT_greater_than_some_value[index] >= N_bjets)
+            n_bjet_cut_flag =  true;
     }
 
     if (vec_signal_jets.size() >= N_jets) {
@@ -383,11 +382,11 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
         n_jets_cut_flag) {
         cout << "pass n_lept_cut_flag, n_bjet_cut_flag, n_jets_cut_flag" << endl;
         for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
-            bool jets_pt_cut_flag = true; // set default to true
+            bool jets_pt_cut_flag = false;
             cout << "jets_pt_cuts=" << jets_pt_cuts[i_jets_pt] << endl;
             for (auto & jet_itr : vec_signal_jets) {
-                if (jet_itr.get_pt() / 1000. < jets_pt_cuts[i_jets_pt])
-                    jets_pt_cut_flag = false;
+                if (jet_itr.get_pt() / 1000. > jets_pt_cuts[i_jets_pt])
+                    jets_pt_cut_flag = true;
             }
             if (jets_pt_cut_flag) {
                 cout << "pass jets_pt_cut_flag" << endl;
