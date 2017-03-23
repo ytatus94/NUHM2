@@ -1065,7 +1065,7 @@ EL::StatusCode ytEventSelection::execute ()
     // JVT cut applied after OR and jet quality
     fill_JVT_jets(vec_OR_jets);
 
-    if (!isSkim && isOptimization) {
+    if (!isSkim && !isOptimization) {
         bool cut9  = m_cutflow->pass_at_least_one_signal_jet(vec_JVT_jets);
         m_cutflow->update(At_least_one_signal_jet, cut9);
         if (!cut9) return EL::StatusCode::SUCCESS;
