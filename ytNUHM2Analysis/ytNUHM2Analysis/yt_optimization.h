@@ -33,7 +33,7 @@ public:
     int  run_number;
     long event_number;
 
-    double  derivation_stat_weights;
+    double derivation_stat_weights;
 
     float luminosity;
 
@@ -43,17 +43,20 @@ public:
     float cross_section_kfactor_efficiency;
 
     // Weights
-    float event_weight;
-    float lepton_weight;
-    float jet_weight;
-    float pileup_weight;
+    double weight;
+    float  event_weight;
+    float  lepton_weight;
+    float  jet_weight;
+    float  pileup_weight;
 
     vector<Electron>    vec_signal_elec;
     vector<Muon>        vec_signal_muon;
     vector<Lepton>      vec_signal_lept;
     vector<Jet>         vec_signal_jets;
     vector<Jet>         vec_signal_bjet;
-    vector<int>         vec_N_bjet_pT_greater_than_some_value;
+
+    vector<Jet>         vec_signal_jets_with_pt_cut;
+    vector<Jet>         vec_signal_bjet_with_pt_cut;
 
     // Declare the output
     TFile   *output_file;
@@ -83,6 +86,9 @@ public:
     TH3F    *h_method2_yields;
     TH3F    *h_method2_yields_weighted;
 
+    TH1F    *h_events_survived;
+    TH1F    *h_events_survived_weighted;
+
     // leafs in tree
     // For distributions
     float   Ht;
@@ -100,14 +106,15 @@ public:
     float           meff;
     float           met_over_meff;
 
+    int n_bjet_pTX; // Number of b-jets with pT > X
+    int n_jets_pTX; // Number of jets with pT > X
+
     // Cuts
     static const float N_lept_cuts[5];
     static const float N_bjet_cuts[6];
     static const float N_jets_cuts[9];
     static const float bjet_pt_cuts[9];
     static const float jets_pt_cuts[9];
-    // static const float met_cuts[10];
-    // static const float meff_cuts[21];
     static const float met_cuts[12];
     static const float meff_cuts[12];
 
@@ -129,8 +136,8 @@ public:
     int n_met_cuts_bins;
     int n_meff_cuts_bins;
 
-    int events_survived;
-    int events_survived_weighted;
+    int     events_survived;
+    double  events_survived_weighted;
 
 public:
     yt_optimization();
@@ -163,16 +170,15 @@ public:
     void copy_vectors(vector<Electron> elec, vector<Muon> muon, vector<Lepton> lept, vector<Jet> jets);
     void fill_signal_bjets(vector<Jet> signal_jets);
     void fill_Nbjets_pT();
+    void fill_vec_jets_with_pT_cut(string jet, int pt);
 
     void apply_signal_region_cuts(int cut_n_leptons,
                                   int cut_bjets_pT, int cut_n_bjets,
                                   int cut_jet_pt, int cut_n_jet,
                                   int cut_met, int cut_meff,
+                                  float cut_met_over_meff,
                                   float weight);
-    // void get_events_survived();
-    // void get_events_survived_weighted();
-
-    void debug_print();
+    void debug_print(string s);
 
     ClassDef(yt_optimization, 0);
 };

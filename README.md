@@ -2,6 +2,33 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v20. This version can get almost the same 4topSM SR events
+1. `yt_optimization.h`:
+   * Add `weight` data member
+   * Add two new vectors `vec_signal_jets_with_pt_cut` and `vec_signal_bjet_with_pt_cut` to keep jets and b-jets with pT requirement.
+   * Add two histograms `h_events_survived` and `h_events_survived_weighted` to keep the events after SR cut.
+   * Add two data members `n_bjet_pTX` and `n_jets_pTX` to keep number of jets and b-jets events with pT requirement.
+   * Change the type of `events_survived_weighted` from `int` to `double`
+   * Add new method `fill_vec_jets_with_pT_cut()`
+   * Add new argument in `apply_signal_region_cuts()`
+   * The method `debug_print()` now needs to pass argument
+   * Remove `vec_N_bjet_pT_greater_than_some_value`, `get_events_survived()`, and `get_events_survived_weighted()`
+2. `yt_optimization.cxx`:
+   * Initialize `n_bjet_pTX` and `n_jets_pTX` to zero and add branches for them.
+   * Initialize two histograms `h_events_survived` and `h_events_survived_weighted`
+   * Delete two branches for `events_survived` and `events_survived_weighted`
+   * Add two for loops to calculate `n_bjet_pTX` and `n_jets_pTX`.
+   * Modify method2 using `n_bjet_pTX` and `n_jets_pTX`
+   * Midify `apply_signal_region_cuts()` and `debug_print()`
+3. SR1b1 events=253, events_weighted=0.386407
+   SR1b2 events=408, events_weighted=0.617939
+   SR3b1 events=342, events_weighted=0.516968
+   SR3b2 events=327, events_weighted=0.510207
+   * The events=342 in SR3b1 is different from Othmane's result (340)
+   * All the weighted events are different from Othmane's results but very close.
+   * It might because Othmane used different luminosity (36.47)
+ 
+
 ### v19. Modify method2
 1. `yt_optimization.cxx`:
    * Modify the code when N_bjet > 0
