@@ -317,7 +317,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                     //         njets++;
                     // }
                     vector<Jet> vec_jets_with_pt_cut;
-                    for (auto & jet_itr : vec_signal_jet) {
+                    for (auto & jet_itr : vec_signal_jets) {
                         if (jet_itr.get_pt() / 1000. > jets_pt_cuts[i_jets_pt])
                             vec_jets_with_pt_cut.push_back(jet_itr);
                     }
