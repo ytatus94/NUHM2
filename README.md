@@ -2,6 +2,20 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v22. Correct the method 1
+1. `yt_optimization.cxx`
+   * Change the meff_cuts values
+   * Change the constants' value
+   * Comment the output tree
+   * Comment the `debug_print()`
+   * Modifyt the method 1
+   * Comment the cout in method 2
+   * Add the SR regions for applying `apply_signal_region_cuts()`
+2. `ytOptimization_plots_method2.C`
+   * Change the input path
+   * Add histograms to keep number of signal and number of backround w/ and w/o weighted.
+
+
 ### v21. Modify the method2 plot making script.
 1. `ytOptimization_plots_method2.C`
    * Change the input path

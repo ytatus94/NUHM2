@@ -28,7 +28,7 @@ const float jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
 const float met_cuts[12] = {50., 75., 100., 125., 150., 175., 200., 250., 300., 350., 400., 500.};
 const float meff_cuts[12] = {0., 500., 700., 900., 1100., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
 
-string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170324/";
+string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170324_SR1b1/";
 
 string signal_files[7] = {
     "optimization_MC_NUHM2_m12_300_strong.root",
@@ -102,6 +102,7 @@ string background_files[48] = {
 void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m12_400_strong.root", float luminosity = 36.5, float bkg_uncertainty = 0.3)
 {
     TFile *f_signal = TFile::Open((path + signal_file).c_str());
+    TH3F *h_signal_yield = (TH3F *)f_signal->Get("h_method2_yields");
     TH3F *h_signal_yield_weighted = (TH3F *)f_signal->Get("h_method2_yields_weighted");
 
     double signal_cross_section_kfactor_efficiency = 0;
@@ -123,10 +124,12 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
     // Background samples
     int n_background_files = sizeof(background_files) / sizeof(background_files[0]);
     TFile *f_background[n_background_files];
+    TH3F *h_background_yield[n_background_files];
     TH3F *h_background_yield_weighted[n_background_files];
 
     for (int i = 0; i < n_background_files; i++) {
         f_background[i] = TFile::Open((path + background_files[i]).c_str());
+        h_background_yield[i] = (TH3F *)f_background[i]->Get("h_method2_yields");
         h_background_yield_weighted[i] = (TH3F *)f_background[i]->Get("h_method2_yields_weighted");
     }
 
@@ -139,6 +142,10 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
     for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
         stringstream bin_counter;
         bin_counter << bin;
+        string h_nsig_name = "h_nsig_" + bin_counter.str();
+        string h_nsig_weighted_name = "h_nsig_weighted_" + bin_counter.str();
+        string h_nbkg_name = "h_nbkg_" + bin_counter.str();
+        string h_nbkg_weighted_name = "h_nbkg_weighted_" + bin_counter.str();
         string hist_name = "hist_" + bin_counter.str();
 
         stringstream ss_n_lept_cuts, ss_bjet_pt_cuts, ss_n_bjet_cuts, ss_jets_pt_cuts, ss_n_jets_cuts;
@@ -162,9 +169,21 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
         cout << "n_xbins=" << n_xbins << endl;
         cout << "n_ybins=" << n_ybins << endl;
 
+        TH2F *hist_n_signal = new TH2F(h_nsig_name.c_str(),
+                                       (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
+                                       n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+        TH2F *hist_n_signal_weighted = new TH2F(h_nsig_weighted_name.c_str(),
+                                                (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
+                                                n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+        TH2F *hist_n_background = new TH2F(h_nbkg_name.c_str(),
+                                           (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
+                                           n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+        TH2F *hist_n_background_weighted = new TH2F(h_nbkg_weighted_name.c_str(),
+                                                    (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
+                                                    n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
         TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                             n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
-                             // n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
+                              n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+                              // n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
 
         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
             hist->GetXaxis()->SetBinLabel(i_met + 1, met_cuts[i_met]);
@@ -182,16 +201,19 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
                     << endl;
 
                 // Signal
-                int n_signal = h_signal_yield_weighted->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
+                int n_signal = h_signal_yield->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
+                int n_signal_weighted = h_signal_yield_weighted->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
                             // * signal_cross_section_kfactor_efficiency;
 
                 // Loop over background
-                int n_background = 0;
+                int n_background = 0, n_background_weighted = 0;
                 for (int i = 0; i < n_background_files; i++) {
-                    n_background += h_background_yield_weighted[i]->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
+                    n_background += h_background_yield[i]->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
+                    n_background_weighted += h_background_yield_weighted[i]->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
                 }
 
                 cout << "n_signal=" << n_signal << ", n_background=" << n_background << endl;
+                cout << "n_signal_weighted=" << n_signal << ", n_background_weighted=" << n_background << endl;
 
                 // Calculate significance
                 float significance = 0;
