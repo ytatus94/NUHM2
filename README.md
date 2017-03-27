@@ -2,6 +2,14 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v21. Modify the method2 plot making script.
+1. `ytOptimization_plots_method2.C`
+   * Change the input path
+   * Uncomment the NUHM2 `signal_cross_section_kfactor_efficiency`
+   * Change the declaration of output histogram
+   * Set the significance to 0.02 and 0.01 when `n_signal < 2` and `n_background < 1`, respectively.
+
+
 ### v20. This version can get almost the same 4topSM SR events
 1. `yt_optimization.h`:
    * Add `weight` data member

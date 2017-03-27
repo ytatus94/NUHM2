@@ -28,7 +28,7 @@ const float jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
 const float met_cuts[12] = {50., 75., 100., 125., 150., 175., 200., 250., 300., 350., 400., 500.};
 const float meff_cuts[12] = {0., 500., 700., 900., 1100., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
 
-string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170320/";
+string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170324/";
 
 string signal_files[7] = {
     "optimization_MC_NUHM2_m12_300_strong.root",
@@ -104,21 +104,21 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
     TFile *f_signal = TFile::Open((path + signal_file).c_str());
     TH3F *h_signal_yield_weighted = (TH3F *)f_signal->Get("h_method2_yields_weighted");
 
-    // double signal_cross_section_kfactor_efficiency = 0;
-    // if (signal_file == "optimization_MC_NUHM2_m12_300_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_300;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_350_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_350;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_400_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_400;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_500_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_500;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_600_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_600;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_700_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_700;
-    // else if (signal_file == "optimization_MC_NUHM2_m12_800_strong.root")
-    //     signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_800;
+    double signal_cross_section_kfactor_efficiency = 0;
+    if (signal_file == "optimization_MC_NUHM2_m12_300_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_300;
+    else if (signal_file == "optimization_MC_NUHM2_m12_350_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_350;
+    else if (signal_file == "optimization_MC_NUHM2_m12_400_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_400;
+    else if (signal_file == "optimization_MC_NUHM2_m12_500_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_500;
+    else if (signal_file == "optimization_MC_NUHM2_m12_600_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_600;
+    else if (signal_file == "optimization_MC_NUHM2_m12_700_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_700;
+    else if (signal_file == "optimization_MC_NUHM2_m12_800_strong.root")
+        signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_800;
 
     // Background samples
     int n_background_files = sizeof(background_files) / sizeof(background_files[0]);
@@ -163,10 +163,13 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
         cout << "n_ybins=" << n_ybins << endl;
 
         TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                             n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
+                             n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+                             // n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
 
         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
+            hist->GetXaxis()->SetBinLabel(i_met + 1, met_cuts[i_met]);
             for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
+                hist->GetYaxis()->SetBinLabel(i_meff + 1, meff_cuts[i_meff]);
                 cout << "bin=" << bin
                     << ": i_jets_pt=" << i_jets_pt
                     << ", i_met=" << i_met
@@ -198,9 +201,9 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
                     significance = RooStats::NumberCountingUtils::BinomialExpZ(n_signal, n_background, bkg_uncertainty);
                 }
                 else if (n_signal < 2)
-                    significance = -2;
+                    significance = 0.02;
                 else if (n_background < 1)
-                    significance = -1;
+                    significance = 0.01;
 
                 cout << "significance=" << significance << endl;
 
