@@ -55,8 +55,8 @@ public:
     vector<Jet>         vec_signal_jets;
     vector<Jet>         vec_signal_bjet;
 
-    vector<Jet>         vec_signal_jets_with_pt_cut;
-    vector<Jet>         vec_signal_bjet_with_pt_cut;
+    // vector<Jet>         vec_signal_jets_with_pt_cut;
+    // vector<Jet>         vec_signal_bjet_with_pt_cut;
 
     // Declare the output
     TFile   *output_file;
@@ -110,10 +110,10 @@ public:
     int n_jets_pTX; // Number of jets with pT > X
 
     // Cuts
-    static const float N_lept_cuts[5];
-    static const float N_bjet_cuts[6];
-    static const float N_jets_cuts[9];
-    static const float bjet_pt_cuts[9];
+    static const float N_lept_cuts[1];
+    static const float N_bjet_cuts[1];
+    static const float N_jets_cuts[1];
+    static const float bjet_pt_cuts[1];
     static const float jets_pt_cuts[9];
     static const float met_cuts[12];
     static const float meff_cuts[12];
@@ -169,8 +169,7 @@ public:
     void reset_vectors();
     void copy_vectors(vector<Electron> elec, vector<Muon> muon, vector<Lepton> lept, vector<Jet> jets);
     void fill_signal_bjets(vector<Jet> signal_jets);
-    void fill_Nbjets_pT();
-    void fill_vec_jets_with_pT_cut(string jet, int pt);
+    int  fill_vec_jets_with_pT_cut(string jet, int pt);
 
     void apply_signal_region_cuts(int cut_n_leptons,
                                   int cut_bjets_pT, int cut_n_bjets,

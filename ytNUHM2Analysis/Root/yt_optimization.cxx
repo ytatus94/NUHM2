@@ -3,10 +3,10 @@
 
 
 
-const float yt_optimization::N_lept_cuts[5] = {2, 3, 4, 5, 6};
-const float yt_optimization::N_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
-const float yt_optimization::N_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-const float yt_optimization::bjet_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
+// const float yt_optimization::N_lept_cuts[5] = {2, 3, 4, 5, 6};
+// const float yt_optimization::N_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
+// const float yt_optimization::N_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
+// const float yt_optimization::bjet_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
 const float yt_optimization::jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
 // const float yt_optimization::met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
 // const float yt_optimization::meff_cuts[21] = {
@@ -15,6 +15,14 @@ const float yt_optimization::jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70
 // };
 const float yt_optimization::met_cuts[12] = {50., 75., 100., 125., 150., 175., 200., 250., 300., 350., 400., 500.};
 const float yt_optimization::meff_cuts[12] = {0., 500., 600., 900., 1200., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
+
+const float yt_optimization::N_lept_cuts[1] = {2};
+const float yt_optimization::N_bjet_cuts[1] = {1};
+const float yt_optimization::N_jets_cuts[1] = {6};
+const float yt_optimization::bjet_pt_cuts[1] = {20.};
+// const float yt_optimization::jets_pt_cuts[1] = {25.};
+// const float yt_optimization::met_cuts[1] = {150.};
+// const float yt_optimization::meff_cuts[1] = {600.};
 
 #define N_lepts 2
 #define N_bjets 1
@@ -278,91 +286,99 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             n_jets_pTX++;
     }
 
+
+
     // Method 1
     // Number of lepton requirement
     for (unsigned int i_lept = 0; i_lept < sizeof(N_lept_cuts) / sizeof(N_lept_cuts[0]); i_lept++) {
-        //cout << "N_lept_cuts=" << N_lept_cuts[i_lept] << endl;
-        if (static_cast<int>(vec_signal_lept.size()) < N_lept_cuts[i_lept])
-            continue;
-        // b-jet pT requirement
-        for (unsigned int i_bjet_pt = 0; i_bjet_pt < sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]); i_bjet_pt++) {
-            //cout << "*bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt] << endl;
-            // int nbjets = 0;
-            // for (auto & bjet_itr : vec_signal_bjet) {
-            //     if (bjet_itr.get_pt() / 1000. > bjet_pt_cuts[i_bjet_pt]) // in GeV
-            //         nbjets++;
-            // }
-            vector<Jet> vec_bjet_with_pt_cut;
-            for (auto & jet_itr : vec_signal_bjet) {
-                if (jet_itr.get_pt() / 1000. > bjet_pt_cuts[i_bjet_pt])
-                    vec_bjet_with_pt_cut.push_back(jet_itr);
-            }
-
-            // Number of b-jet requirement
-            for (unsigned int i_bjet = 0; i_bjet < sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0]); i_bjet++) {
-                //cout << "**N_bjet_cuts=" << N_bjet_cuts[i_bjet] << endl;
-                if (N_bjet_cuts[i_bjet] == 0)
-                    if (static_cast<int> (vec_signal_bjet.size()) > 0) // Zero b-jet so I use vec_signal_bjet
-                        continue;
-                else // N_bjet_cuts[i_bjet] > 0
-                    if (static_cast<int> (vec_bjet_with_pt_cut.size()) < N_bjet_cuts[i_bjet])
-                        continue;
-
-                // jet pT requirement
-                for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
-                    //cout << "***jets_pt_cuts=" << jets_pt_cuts[i_jets_pt] << endl;
-                    // int njets = 0;
-                    // for (auto & jet_itr : vec_signal_jets) {
-                    //     if (jet_itr.get_pt() / 1000. >= jets_pt_cuts[i_jets_pt]) // in GeV
-                    //         njets++;
-                    // }
-                    vector<Jet> vec_jets_with_pt_cut;
-                    for (auto & jet_itr : vec_signal_jets) {
-                        if (jet_itr.get_pt() / 1000. > jets_pt_cuts[i_jets_pt])
-                            vec_jets_with_pt_cut.push_back(jet_itr);
+        // cout << "N_lept_cuts=" << N_lept_cuts[i_lept] << endl;
+        bool n_lept_cut_flag = false;
+        if (static_cast<int>(vec_signal_lept.size()) >= N_lept_cuts[i_lept])
+            n_lept_cut_flag = true;
+        if (n_lept_cut_flag) {
+            // b-jet pT requirement
+            for (unsigned int i_bjet_pt = 0; i_bjet_pt < sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]); i_bjet_pt++) {
+                // cout << "*bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt] << endl;
+                // Number of b-jet requirement
+                for (unsigned int i_bjet = 0; i_bjet < sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0]); i_bjet++) {
+                    // cout << "**N_bjet_cuts=" << N_bjet_cuts[i_bjet] << endl;
+                    bool n_bjet_cut_flag = false;
+                    if (N_bjet_cuts[i_bjet] == 0) {
+                        if (static_cast<int> (vec_signal_bjet.size()) == 0) // Zero b-jet so I use vec_signal_bjet
+                            n_bjet_cut_flag =  true;
                     }
+                    else { // N_bjet_cuts[i_bjet] > 0
+                        if (this->fill_vec_jets_with_pT_cut("bjets", bjet_pt_cuts[i_bjet_pt]) >= N_bjet_cuts[i_bjet])
+                            n_bjet_cut_flag =  true;
+                    }
+                    if (n_bjet_cut_flag) {
+                        // jet pT requirement
+                        for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
+                            // cout << "***jets_pt_cuts=" << jets_pt_cuts[i_jets_pt] << endl;
+                            // Number of jet requirement
+                            for (unsigned int i_jets = 0; i_jets < sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0]); i_jets++) {
+                                // cout << "****N_jets_cuts=" << N_jets_cuts[i_jets] << endl;
+                                bool n_jets_cut_flag = false;
+                                if (this->fill_vec_jets_with_pT_cut("jets", jets_pt_cuts[i_jets_pt]) >= N_jets_cuts[i_jets])
+                                    n_jets_cut_flag = true;
+                                if (n_jets_cut_flag) {
+                                    // MET requirement
+                                    for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
+                                        // cout << "*****met_cuts=" << met_cuts[i_met] << endl;
+                                        bool met_cut_flag = false;
+                                        if (met / 1000. > met_cuts[i_met]) // in GeV
+                                            met_cut_flag = true;
+                                        if (met_cut_flag) {
+                                            // Meff requirement
+                                            for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
+                                                // cout << "******meff_cuts=" << meff_cuts[i_meff] << endl;
+                                                bool meff_cut_flag = false;
+                                                if (meff / 1000. > meff_cuts[i_meff]) // in GeV
+                                                    meff_cut_flag = true;;
+                                                if (meff_cut_flag) {
+                                                    if (met / meff > 0.25) {
+                                                        cout << "Method1 pass n_lept >= " << N_lept_cuts[i_lept]
+                                                            << ", n_bjet >= " << N_bjet_cuts[i_bjet] << " (with b-jets pT >" << bjet_pt_cuts[i_bjet_pt] << " GeV)"
+                                                            << ", n_jets >=" << N_jets_cuts[i_jets] << " (with jets pT >" << jets_pt_cuts[i_jets_pt] << " GeV)"
+                                                            << ", met > " << met_cuts[i_met] << " GeV"
+                                                            << ", meff > " << meff_cuts[i_meff] << " GeV"
+                                                            << endl;
 
-                    // Number of jet requirement
-                    for (unsigned int i_jets = 0; i_jets < sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0]); i_jets++) {
-                        //cout << "****N_jets_cuts=" << N_jets_cuts[i_jets] << endl;
-                        if (static_cast<int> (vec_jets_with_pt_cut.size()) < N_jets_cuts[i_jets])
-                            continue;
-                        // MET requirement
-                        for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
-                            //cout << "*****met_cuts=" << met_cuts[i_met] << endl;
-                            if (met / 1000. <= met_cuts[i_met]) // in GeV
-                                continue;
-                            // Meff requirement
-                            for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
-                                //cout << "******meff_cuts=" << meff_cuts[i_meff] << endl;
-                                int bin = 1 + i_meff;
-                                bin += i_met * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_jets * sizeof(met_cuts) / sizeof(met_cuts[0])
-                                              * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_jets_pt * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
-                                                 * sizeof(met_cuts) / sizeof(met_cuts[0])
-                                                 * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_bjet * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
-                                              * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
-                                              * sizeof(met_cuts) / sizeof(met_cuts[0])
-                                              * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_bjet_pt * sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0])
-                                                 * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
-                                                 * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
-                                                 * sizeof(met_cuts) / sizeof(met_cuts[0])
-                                                 * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                bin += i_lept * sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0])
-                                              * sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0])
-                                              * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
-                                              * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
-                                              * sizeof(met_cuts) / sizeof(met_cuts[0])
-                                              * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                if (meff / 1000. <= meff_cuts[i_meff]) // in GeV
-                                    continue;
+                                                        // Calculate the bin to be filled
+                                                        int bin = 1 + i_meff;
+                                                        bin += i_met * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
+                                                        bin += i_jets * sizeof(met_cuts) / sizeof(met_cuts[0])
+                                                                      * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
+                                                        bin += i_jets_pt * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
+                                                                         * sizeof(met_cuts) / sizeof(met_cuts[0])
+                                                                         * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
+                                                        bin += i_bjet * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
+                                                                      * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
+                                                                      * sizeof(met_cuts) / sizeof(met_cuts[0])
+                                                                      * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
+                                                        bin += i_bjet_pt * sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0])
+                                                                         * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
+                                                                         * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
+                                                                         * sizeof(met_cuts) / sizeof(met_cuts[0])
+                                                                         * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
+                                                        bin += i_lept * sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0])
+                                                                      * sizeof(N_bjet_cuts) / sizeof(N_bjet_cuts[0])
+                                                                      * sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0])
+                                                                      * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
+                                                                      * sizeof(met_cuts) / sizeof(met_cuts[0])
+                                                                      * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
+                                                        cout << "bin=" << bin << endl;
 
-                                h_yields->AddBinContent(bin);
-                                h_yields_weighted->AddBinContent(bin, weight);
-                                //cout << "bin=" << bin << endl;
+                                                        // Fill the histograms
+                                                        h_yields->AddBinContent(bin);
+                                                        h_yields_weighted->AddBinContent(bin, weight);
+                                                        
+                                                    } // This is for met/meff condition
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -370,6 +386,10 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             }
         }
     }
+
+
+
+
 
 
     // Method 2
@@ -386,8 +406,9 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             n_bjet_cut_flag =  true;
     }
     else { // N_bjets > 0
-        this->fill_vec_jets_with_pT_cut("bjets", Bjet_pT);
-        if (vec_signal_bjet_with_pt_cut.size() >= N_bjets)
+        // this->fill_vec_jets_with_pT_cut("bjets", Bjet_pT);
+        // if (vec_signal_bjet_with_pt_cut.size() >= N_bjets)
+        if (this->fill_vec_jets_with_pT_cut("bjets", Bjet_pT) >= N_bjets)
             n_bjet_cut_flag =  true;
     }
 
@@ -396,8 +417,9 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
         // Number of jets requirement with pT greater than some values
         for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
             bool n_jets_cut_flag = false;
-            this->fill_vec_jets_with_pT_cut("jets", jets_pt_cuts[i_jets_pt]);
-            if (vec_signal_jets_with_pt_cut.size() >= N_jets)
+            // this->fill_vec_jets_with_pT_cut("jets", jets_pt_cuts[i_jets_pt]);
+            // if (vec_signal_jets_with_pt_cut.size() >= N_jets)
+            if (this->fill_vec_jets_with_pT_cut("jets", jets_pt_cuts[i_jets_pt]) >= N_jets)
                 n_jets_cut_flag = true;
             if (n_jets_cut_flag) {
                 for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
@@ -410,17 +432,19 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                             if (meff / 1000. > meff_cuts[i_meff])
                                 meff_cut_flag = true;
                             if (meff_cut_flag) {
-                                // cout << "pass n_lept >= " << N_lepts
-                                //     << ", n_bjet >= " << N_bjets << " (with b-jets pT >" << Bjet_pT << " GeV)"
-                                //     << ", n_jets >=" << N_jets << " (with jets pT >" << jets_pt_cuts[i_jets_pt] << " GeV)"
-                                //     << ", met > " << met_cuts[i_met] << " GeV"
-                                //     << ", meff > " << meff_cuts[i_meff] << " GeV"
-                                //     << endl;
+                                if (met/meff <= 0.25)
+                                    continue;
+                                cout << "Method2 pass n_lept >= " << N_lepts
+                                    << ", n_bjet >= " << N_bjets << " (with b-jets pT >" << Bjet_pT << " GeV)"
+                                    << ", n_jets >=" << N_jets << " (with jets pT >" << jets_pt_cuts[i_jets_pt] << " GeV)"
+                                    << ", met > " << met_cuts[i_met] << " GeV"
+                                    << ", meff > " << meff_cuts[i_meff] << " GeV"
+                                    << endl;
                                 float old_yields = h_method2_yields->GetBinContent(i_jets_pt + 1,
                                                                                    i_met + 1,
                                                                                    i_meff + 1);
-                                // cout << "At bin=(" << i_jets_pt + 1 << ", " << i_met + 1 << ", " << i_meff + 1
-                                //     << "), old_yields=" << old_yields << endl;
+                                cout << "At bin=(" << i_jets_pt + 1 << ", " << i_met + 1 << ", " << i_meff + 1
+                                    << "), old_yields=" << old_yields << endl;
                                 h_method2_yields->SetBinContent(i_jets_pt + 1,
                                                                 i_met + 1,
                                                                 i_meff + 1,
@@ -428,13 +452,13 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                 float old_weighted_yields = h_method2_yields_weighted->GetBinContent(i_jets_pt + 1,
                                                                                                      i_met + 1,
                                                                                                      i_meff + 1);
-                                // cout << "At bin=(" << i_jets_pt + 1 << ", " << i_met + 1 << ", " << i_meff + 1
-                                //     << "), old_weighted_yields=" << old_weighted_yields << endl;
+                                cout << "At bin=(" << i_jets_pt + 1 << ", " << i_met + 1 << ", " << i_meff + 1
+                                    << "), old_weighted_yields=" << old_weighted_yields << endl;
                                 h_method2_yields_weighted->SetBinContent(i_jets_pt + 1,
                                                                          i_met + 1,
                                                                          i_meff + 1,
                                                                          old_weighted_yields + 1 * weight);
-                                // cout << "weight=" << weight << endl;
+                                cout << "weight=" << weight << endl;
                             }
                         }
                     }
@@ -483,7 +507,7 @@ void yt_optimization::finalize()
 {
     // cout << "Call yt_optimization::finalize()" << endl;
 
-    // cout << "In yt_optimization::finalize(): events_survived=" << events_survived << ", events_survived_weighted=" << events_survived_weighted << endl;
+    cout << "In yt_optimization::finalize(): events_survived=" << events_survived << ", events_survived_weighted=" << events_survived_weighted << endl;
     h_events_survived->SetBinContent(1, events_survived);
     h_events_survived_weighted->SetBinContent(1, events_survived_weighted);
 
@@ -518,8 +542,8 @@ void yt_optimization::reset_vectors()
     vec_signal_jets.clear();
     vec_signal_bjet.clear();
 
-    vec_signal_jets_with_pt_cut.clear();
-    vec_signal_bjet_with_pt_cut.clear();
+    // vec_signal_jets_with_pt_cut.clear();
+    // vec_signal_bjet_with_pt_cut.clear();
 }
 
 
@@ -544,19 +568,24 @@ void yt_optimization::fill_signal_bjets(vector<Jet> signal_jets)
 
 
 
-void yt_optimization::fill_vec_jets_with_pT_cut(string jet, int pt)
+int yt_optimization::fill_vec_jets_with_pT_cut(string jet, int pt)
 {
+    vector<Jet> vec_signal_jets_with_pt_cut;
+    vector<Jet> vec_signal_bjet_with_pt_cut;
+
     if (jet != "bjets") {
         for (auto & jet_itr : vec_signal_jets) {
             if (jet_itr.get_pt() / 1000. > pt)
                 vec_signal_jets_with_pt_cut.push_back(jet_itr);
         }
+        return vec_signal_jets_with_pt_cut.size();
     }
     else { // b-jets
         for (auto & jet_itr : vec_signal_bjet) {
             if (jet_itr.get_pt() / 1000. > pt)
                 vec_signal_bjet_with_pt_cut.push_back(jet_itr);
         }
+        return vec_signal_bjet_with_pt_cut.size();
     }
 }
 
@@ -585,14 +614,16 @@ void yt_optimization::apply_signal_region_cuts(int cut_n_leptons,
             n_bjet_cut_flag =  true;
     }
     else { // cut_n_bjets > 0
-        this->fill_vec_jets_with_pT_cut("bjets", cut_bjets_pT);
-        if (static_cast<int> (vec_signal_bjet_with_pt_cut.size()) >= cut_n_bjets)
+        // this->fill_vec_jets_with_pT_cut("bjets", cut_bjets_pT);
+        // if (static_cast<int> (vec_signal_bjet_with_pt_cut.size()) >= cut_n_bjets)
+        if (this->fill_vec_jets_with_pT_cut("bjets", cut_bjets_pT) >= cut_n_bjets)
             n_bjet_cut_flag =  true;
     }
 
     bool n_jets_cut_flag = false;
-    this->fill_vec_jets_with_pT_cut("jets", cut_jet_pt);
-    if (static_cast<int> (vec_signal_jets_with_pt_cut.size()) >= cut_n_jet)
+    // this->fill_vec_jets_with_pT_cut("jets", cut_jet_pt);
+    // if (static_cast<int> (vec_signal_jets_with_pt_cut.size()) >= cut_n_jet)
+    if (this->fill_vec_jets_with_pT_cut("jets", cut_jet_pt) >= cut_n_jet)
         n_jets_cut_flag = true;
 
     bool met_cut_flag = false;

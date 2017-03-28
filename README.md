@@ -2,6 +2,19 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v23. Modify method 1 and 2 to compare 4topSM results.
+1. `yt_optimization.h`:
+   * Comment `vec_signal_jets_with_pt_cut` and `vec_signal_bjet_with_pt_cut`.
+   * Remove `fill_Nbjets_pT()`
+   * Change the return type of `fill_vec_jets_with_pT_cut()` to int.
+   * Change the number of elements for `N_lept_cuts`, `N_bjet_cuts`, `N_jets_cuts`, and `bjet_pt_cuts`.
+2. `yt_optimization.cxx`:
+   * Change the constant arraies
+   * Modify method 1
+   * Modify method 2
+   * Modify the parts use vec_signal_jets_with_pt_cut` and `vec_signal_bjet_with_pt_cut`.
+
+
 ### v22. Correct the method 1
 1. `yt_optimization.cxx`
    * Change the meff_cuts values
