@@ -2,6 +2,36 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v24. Modify the optimization scripts
+1. `ytOptimization_plots.C`:
+   * Change the constant arraies.
+   * Change the input path
+   * Change the value of `background_files` array
+   * Use m1/2=500 as input `signal_file`
+   * Remove unused `derivation_stat_weights` and `cross_section_kfactor_efficiency` histograms
+   * Add unweighted signal yields and background yields
+   * Add new histogram names.
+   * Modify the `n_xbin` and `n_ybin` to correct values.
+   * Add 4 new histograms to keep signal and background yields and unyields.
+   * Use the correct x and y labels for the historams.
+   * Correct the type of the weighted yields for signal and background.
+   * weighted signal yields need to multiply the `signal_cross_section_kfactor_efficiency`
+   * Use the weighted yields to calculate the significance.
+   * set significance to 0.02 and 0.01 when `n_signal_weighted < 2` and `n_background_weighted < 1`, respectively.
+2. `ytOptimization_plots_method2.C`
+   * Change the constant arraies and constant values.
+   * Change the input path
+   * Change the value of `background_files` array
+   * Use m1/2=500 as input `signal_file`
+   * Modify the `n_xbin` and `n_ybin` to correct values.
+   * Add 4 new histograms to keep signal and background yields and unyields.
+   * Use the correct x and y labels for the historams.
+   * Correct the type of the weighted yields for signal and background.
+   * weighted signal yields need to multiply the `signal_cross_section_kfactor_efficiency`
+   * Use the weighted yields to calculate the significance.
+   * set significance to 0.02 and 0.01 when `n_signal_weighted < 2` and `n_background_weighted < 1`, respectively.
+
+
 ### v23. Modify method 1 and 2 to compare 4topSM results.
 1. `yt_optimization.h`:
    * Comment `vec_signal_jets_with_pt_cut` and `vec_signal_bjet_with_pt_cut`.

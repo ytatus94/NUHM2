@@ -10,25 +10,29 @@
 #include <sstream>
 using namespace std;
 
-#define N_lepts 3
-#define N_bjets 0
-#define Bjet_pT 0
-#define N_jets 4
+#define N_lepts 2
+#define N_bjets 1
+#define Bjet_pT 20
+#define N_jets 6
 
 // const float n_lept_cuts[5] = {2, 3, 4, 5, 6};
 // const float n_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
 // const float n_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 // const float bjet_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
-const float jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
+// const float jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
+const float jets_pt_cuts[1] = {25.};
 // const float met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
 // const float meff_cuts[21] = {
 //     0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 
 //     1100., 1200., 1300., 1400., 1500., 1600., 1700., 1800., 1900., 2000.
 // };
 const float met_cuts[12] = {50., 75., 100., 125., 150., 175., 200., 250., 300., 350., 400., 500.};
-const float meff_cuts[12] = {0., 500., 700., 900., 1100., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
+const float meff_cuts[12] = {0., 500., 600., 900., 1200., 1300., 1500., 1600., 1700., 1800., 1900., 2100.};
+// const float met_cuts[1] = {150.};
+// const float meff_cuts[1] = {600.};
 
-string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170324_SR1b1/";
+// string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/Results/20170327_SR1b1/";
+string path = "/raid05/users/shen/Ximo_ntuples/v44/NUHM2/";
 
 string signal_files[7] = {
     "optimization_MC_NUHM2_m12_300_strong.root",
@@ -48,6 +52,10 @@ string signal_files[7] = {
 #define Xsec_NUMH2_m12_700 0.0020592510
 #define Xsec_NUMH2_m12_800 0.0006553931
 
+string background_files[1] = {
+    "optimization_MC_4topSM.root"
+};
+/*
 string background_files[48] = {
     "optimization_MC_Zee.root",
     "optimization_MC_Zmumu.root",
@@ -98,13 +106,15 @@ string background_files[48] = {
     "optimization_MC_lllvjj_EW6.root",
     "optimization_MC_lllljj_EW6.root"
 };
-
-void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m12_400_strong.root", float luminosity = 36.5, float bkg_uncertainty = 0.3)
+*/
+void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m12_500_strong.root", float luminosity = 36.5, float bkg_uncertainty = 0.3)
 {
     TFile *f_signal = TFile::Open((path + signal_file).c_str());
     TH3F *h_signal_yield = (TH3F *)f_signal->Get("h_method2_yields");
     TH3F *h_signal_yield_weighted = (TH3F *)f_signal->Get("h_method2_yields_weighted");
 
+    // Because the cross_section_kfactor_efficiency = 1 in SUSYTools
+    // We need to correct it by ourself
     double signal_cross_section_kfactor_efficiency = 0;
     if (signal_file == "optimization_MC_NUHM2_m12_300_strong.root")
         signal_cross_section_kfactor_efficiency = Xsec_NUMH2_m12_300;
@@ -161,13 +171,13 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
                         + ", N_{jets}>=" + ss_n_jets_cuts.str()
                         + ", p_{T,jets}>" + ss_jets_pt_cuts.str();
 
-        cout << "hist_title=" << hist_title << endl;
+        // cout << "hist_title=" << hist_title << endl;
 
-        int n_xbins = sizeof(met_cuts) / sizeof(met_cuts[0]) - 1;
-        int n_ybins = sizeof(meff_cuts) / sizeof(meff_cuts[0]) - 1;
+        int n_xbins = sizeof(met_cuts) / sizeof(met_cuts[0]);
+        int n_ybins = sizeof(meff_cuts) / sizeof(meff_cuts[0]);
 
-        cout << "n_xbins=" << n_xbins << endl;
-        cout << "n_ybins=" << n_ybins << endl;
+        // cout << "n_xbins=" << n_xbins << endl;
+        // cout << "n_ybins=" << n_ybins << endl;
 
         TH2F *hist_n_signal = new TH2F(h_nsig_name.c_str(),
                                        (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
@@ -183,12 +193,23 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
                                                     n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
         TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
                               n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
-                              // n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
 
         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
-            hist->GetXaxis()->SetBinLabel(i_met + 1, met_cuts[i_met]);
+            stringstream xbin_value;
+            xbin_value << met_cuts[i_met];
+            hist_n_signal->GetXaxis()->SetBinLabel(i_met + 1, xbin_value.str().c_str());
+            hist_n_signal_weighted->GetXaxis()->SetBinLabel(i_met + 1, xbin_value.str().c_str());
+            hist_n_background->GetXaxis()->SetBinLabel(i_met + 1, xbin_value.str().c_str());
+            hist_n_background_weighted->GetXaxis()->SetBinLabel(i_met + 1, xbin_value.str().c_str());
+            hist->GetXaxis()->SetBinLabel(i_met + 1, xbin_value.str().c_str());
             for (unsigned int i_meff = 0; i_meff < sizeof(meff_cuts) / sizeof(meff_cuts[0]); i_meff++) {
-                hist->GetYaxis()->SetBinLabel(i_meff + 1, meff_cuts[i_meff]);
+                stringstream ybin_value;
+                ybin_value << meff_cuts[i_meff];
+                hist_n_signal->GetYaxis()->SetBinLabel(i_meff + 1, ybin_value.str().c_str());
+                hist_n_signal_weighted->GetYaxis()->SetBinLabel(i_meff + 1, ybin_value.str().c_str());
+                hist_n_background->GetYaxis()->SetBinLabel(i_meff + 1, ybin_value.str().c_str());
+                hist_n_background_weighted->GetYaxis()->SetBinLabel(i_meff + 1, ybin_value.str().c_str());
+                hist->GetYaxis()->SetBinLabel(i_meff + 1, ybin_value.str().c_str());
                 cout << "bin=" << bin
                     << ": i_jets_pt=" << i_jets_pt
                     << ", i_met=" << i_met
@@ -202,29 +223,35 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
 
                 // Signal
                 int n_signal = h_signal_yield->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
-                int n_signal_weighted = h_signal_yield_weighted->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
-                            // * signal_cross_section_kfactor_efficiency;
+                float n_signal_weighted = h_signal_yield_weighted->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1)
+                                        * signal_cross_section_kfactor_efficiency;
 
                 // Loop over background
-                int n_background = 0, n_background_weighted = 0;
+                int n_background = 0;
+                float n_background_weighted = 0;
                 for (int i = 0; i < n_background_files; i++) {
                     n_background += h_background_yield[i]->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
                     n_background_weighted += h_background_yield_weighted[i]->GetBinContent(i_jets_pt + 1, i_met + 1, i_meff + 1);
                 }
 
                 cout << "n_signal=" << n_signal << ", n_background=" << n_background << endl;
-                cout << "n_signal_weighted=" << n_signal << ", n_background_weighted=" << n_background << endl;
+                cout << "n_signal_weighted=" << n_signal_weighted << ", n_background_weighted=" << n_background_weighted << endl;
+
+                hist_n_signal->SetBinContent(i_met + 1, i_meff + 1, n_signal);
+                hist_n_signal_weighted->SetBinContent(i_met + 1, i_meff + 1, n_signal_weighted);
+                hist_n_background->SetBinContent(i_met + 1, i_meff + 1, n_background);
+                hist_n_background_weighted->SetBinContent(i_met + 1, i_meff + 1, n_background_weighted);
 
                 // Calculate significance
                 float significance = 0;
                 
-                if (n_signal >= 2 &&
-                    n_background >= 1) {
-                    significance = RooStats::NumberCountingUtils::BinomialExpZ(n_signal, n_background, bkg_uncertainty);
+                if (n_signal_weighted >= 2. &&
+                    n_background_weighted >= 1.) {
+                    significance = RooStats::NumberCountingUtils::BinomialExpZ(n_signal_weighted, n_background_weighted, bkg_uncertainty);
                 }
-                else if (n_signal < 2)
+                else if (n_signal_weighted < 2.)
                     significance = 0.02;
-                else if (n_background < 1)
+                else if (n_background_weighted < 1.)
                     significance = 0.01;
 
                 cout << "significance=" << significance << endl;
@@ -245,11 +272,56 @@ void ytOptimization_plots_method2(string signal_file = "optimization_MC_NUHM2_m1
         }
         TCanvas *c1 = new TCanvas("c1", "c1");
         gPad->SetLeftMargin(0.12);
+        gStyle->SetPaintTextFormat(".3f");
+        hist_n_signal->SetStats(kFALSE);
+        // hist_n_signal->GetXaxis()->SetNdivisions(110);
+        // hist_n_signal->GetYaxis()->SetNdivisions(110);
+        hist_n_signal->GetYaxis()->SetTitleOffset(1.5);
+        hist_n_signal->Draw("colz,text");
+        c1->SaveAs((h_nsig_name + ".pdf").c_str());
+        c1->Close();
+
+        TCanvas *c2 = new TCanvas("c2", "c2");
+        gPad->SetLeftMargin(0.12);
+        gStyle->SetPaintTextFormat(".3f");
+        hist_n_signal_weighted->SetStats(kFALSE);
+        // hist_n_signal_weighted->GetXaxis()->SetNdivisions(110);
+        // hist_n_signal_weighted->GetYaxis()->SetNdivisions(110);
+        hist_n_signal_weighted->GetYaxis()->SetTitleOffset(1.5);
+        hist_n_signal_weighted->Draw("colz,text");
+        c2->SaveAs((h_nsig_weighted_name + ".pdf").c_str());
+        c2->Close();
+
+        TCanvas *c3 = new TCanvas("c3", "c3");
+        gPad->SetLeftMargin(0.12);
+        gStyle->SetPaintTextFormat(".3f");
+        hist_n_background->SetStats(kFALSE);
+        // hist_n_background->GetXaxis()->SetNdivisions(110);
+        // hist_n_background->GetYaxis()->SetNdivisions(110);
+        hist_n_background->GetYaxis()->SetTitleOffset(1.5);
+        hist_n_background->Draw("colz,text");
+        c3->SaveAs((h_nbkg_name + ".pdf").c_str());
+        c3->Close();
+
+        TCanvas *c4 = new TCanvas("c4", "c4");
+        gPad->SetLeftMargin(0.12);
+        gStyle->SetPaintTextFormat(".3f");
+        hist_n_background_weighted->SetStats(kFALSE);
+        // hist_n_background_weighted->GetXaxis()->SetNdivisions(110);
+        // hist_n_background_weighted->GetYaxis()->SetNdivisions(110);
+        hist_n_background_weighted->GetYaxis()->SetTitleOffset(1.5);
+        hist_n_background_weighted->Draw("colz,text");
+        c4->SaveAs((h_nbkg_weighted_name + ".pdf").c_str());
+        c4->Close();
+
+        TCanvas *c5 = new TCanvas("c5", "c5");
+        gPad->SetLeftMargin(0.12);
+        gStyle->SetPaintTextFormat(".3f");
         hist->SetStats(kFALSE);
         hist->GetYaxis()->SetTitleOffset(1.5);
         hist->Draw("colz,text");
-        c1->SaveAs((hist_name + ".pdf").c_str());
-        c1->Close();
+        c5->SaveAs((hist_name + ".pdf").c_str());
+        c5->Close();
     }
 
     cout << "***** best cut *****" << endl;
