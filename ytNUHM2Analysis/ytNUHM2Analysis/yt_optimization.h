@@ -114,7 +114,7 @@ public:
     static const float N_bjet_cuts[1];
     static const float N_jets_cuts[1];
     static const float bjet_pt_cuts[1];
-    static const float jets_pt_cuts[9];
+    static const float jets_pt_cuts[1];
     static const float met_cuts[12];
     static const float meff_cuts[12];
 

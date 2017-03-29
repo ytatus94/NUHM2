@@ -168,7 +168,7 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                     for (int i_jets = 0; i_jets < sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0]); i_jets++) {
                         // if (n_jets_cuts[i_jets] != 6)
                         //     continue;
-                        cout << "***** bin=" << bin
+                        cout << "***** bin=" << bin + 1
                             << ", n_lept_cuts=" << n_lept_cuts[i_lept]
                             << ", bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt]
                             << ", n_bjet_cuts=" << n_bjet_cuts[i_bjet]
@@ -178,7 +178,7 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                             // << endl;
 
                         stringstream bin_counter;
-                        bin_counter << bin;
+                        bin_counter << bin + 1;
                         string h_nsig_name = "h_nsig_" + bin_counter.str();
                         string h_nsig_weighted_name = "h_nsig_weighted_" + bin_counter.str();
                         string h_nbkg_name = "h_nbkg_" + bin_counter.str();
@@ -243,8 +243,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                                     << endl;
                                 // int n_signal = h_signal_yield_weighted->GetBinContent(bin) 
                                 //              * luminosity * signal_cross_section_kfactor_efficiency * 1000. / signal_derivation_stat_weights;
-                                int n_signal = h_signal_yield->GetBinContent(bin);
-                                float n_signal_weighted = h_signal_yield_weighted->GetBinContent(bin) * signal_cross_section_kfactor_efficiency;
+                                int n_signal = h_signal_yield->GetBinContent(bin + 1);
+                                float n_signal_weighted = h_signal_yield_weighted->GetBinContent(bin + 1) * signal_cross_section_kfactor_efficiency;
 
                                 // Loop over background
                                 int n_background = 0;
@@ -252,8 +252,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                                 for (int i = 0; i < n_background_files; i++) {
                                     // n_background += h_background_yield_weighted[i]->GetBinContent(bin)
                                     //               * luminosity * background_cross_section_kfactor_efficiency[i] * 1000. / background_derivation_stat_weights[i];
-                                    n_background += h_background_yield[i]->GetBinContent(bin);
-                                    n_background_weighted += h_background_yield_weighted[i]->GetBinContent(bin);
+                                    n_background += h_background_yield[i]->GetBinContent(bin + 1);
+                                    n_background_weighted += h_background_yield_weighted[i]->GetBinContent(bin + 1);
                                 }
 
                                 cout << "n_signal=" << n_signal << ", n_background=" << n_background << endl;

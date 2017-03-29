@@ -2,6 +2,12 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v25. Fix bin problem in plot making script
+1. `yt_optimization.h`: Change the `jet_pt_cuts` value to 1
+2. `yt_optimization.cxx`: Modify method 1, it is similar to `apply_signal_region_cuts()` now.
+3. `ytOptimization_plots.C`: Correct `bin` to `bin + 1`
+
+
 ### v24. Modify the optimization scripts
 1. `ytOptimization_plots.C`:
    * Change the constant arraies.
