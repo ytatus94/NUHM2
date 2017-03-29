@@ -10,11 +10,11 @@
 #include <sstream>
 using namespace std;
 
-// const int n_lept_cuts[5] = {2, 3, 4, 5, 6};
-// const int n_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
-// const int n_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-// const int bjet_pt_cuts[9] = {20, 25, 30, 35, 40, 50, 70, 100, 150};
-// const int jets_pt_cuts[9] = {20, 25, 30, 35, 40, 50, 70, 100, 150};
+// const int n_lept_cuts[3] = {2, 3, 4};
+// const int n_bjet_cuts[5] = {0, 1, 2, 3, 4};
+// const int n_jets_cuts[5] = {2, 3, 4, 5, 6};
+// const int bjet_pt_cuts[5] = {20, 30, 40, 50, 70};
+// const int jets_pt_cuts[8] = {20, 25, 30, 40, 50, 70, 100, 150};
 // const double met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
 // const double meff_cuts[21] = {
 //     0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000., 
@@ -152,22 +152,14 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
     int bin = 0;
     // Number of lepton requirement
     for (int i_lept = 0; i_lept < sizeof(n_lept_cuts) / sizeof(n_lept_cuts[0]); i_lept++) {
-        // if (n_lept_cuts[i_lept] != 2)
-        //     continue;
         // b-jet pT requirement
         for (int i_bjet_pt = 0; i_bjet_pt < sizeof(bjet_pt_cuts) / sizeof(bjet_pt_cuts[0]); i_bjet_pt++) {
-            // if (bjet_pt_cuts[i_bjet_pt] != 20)
-            //     continue;
             // Number of b-jet requirement
             for (int i_bjet = 0; i_bjet < sizeof(n_bjet_cuts) / sizeof(n_bjet_cuts[0]); i_bjet++) {
-                // if (n_bjet_cuts[i_bjet] != 1)
-                //     continue;
                 // jet pT requirement
                 for (int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
                     // Number of jet requirement
                     for (int i_jets = 0; i_jets < sizeof(n_jets_cuts) / sizeof(n_jets_cuts[0]); i_jets++) {
-                        // if (n_jets_cuts[i_jets] != 6)
-                        //     continue;
                         cout << "***** bin=" << bin + 1
                             << ", n_lept_cuts=" << n_lept_cuts[i_lept]
                             << ", bjet_pt_cuts=" << bjet_pt_cuts[i_bjet_pt]
@@ -205,20 +197,18 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
 
                         TH2F *hist_n_signal = new TH2F(h_nsig_name.c_str(),
                                        (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                                       n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+                                       n_xbins, 0, n_xbins, n_ybins, 0, n_ybins);
                         TH2F *hist_n_signal_weighted = new TH2F(h_nsig_weighted_name.c_str(),
                                                                 (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                                                                n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+                                                                n_xbins, 0, n_xbins, n_ybins, 0, n_ybins);
                         TH2F *hist_n_background = new TH2F(h_nbkg_name.c_str(),
                                                            (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                                                           n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+                                                           n_xbins, 0, n_xbins, n_ybins, 0, n_ybins);
                         TH2F *hist_n_background_weighted = new TH2F(h_nbkg_weighted_name.c_str(),
                                                                     (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                                                                    n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
+                                                                    n_xbins, 0, n_xbins, n_ybins, 0, n_ybins);
                         TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                                              n_xbins, 0, n_xbins + 1, n_ybins, 0, n_ybins + 1);
-                        // TH2F *hist = new TH2F(hist_name.c_str(), (hist_title + ";E_{T}^{miss} [GeV];M_{eff} [GeV]").c_str(),
-                        //                       n_xbins, &met_cuts[0], n_ybins, &meff_cuts[0]);
+                                              n_xbins, 0, n_xbins, n_ybins, 0, n_ybins);
 
                         // MET requirement
                         for (unsigned int i_met = 0; i_met < sizeof(met_cuts) / sizeof(met_cuts[0]); i_met++) {
@@ -241,8 +231,7 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                                 cout << "met_cuts=" << met_cuts[i_met]
                                     << ", meff_cuts=" << meff_cuts[i_meff]
                                     << endl;
-                                // int n_signal = h_signal_yield_weighted->GetBinContent(bin) 
-                                //              * luminosity * signal_cross_section_kfactor_efficiency * 1000. / signal_derivation_stat_weights;
+
                                 int n_signal = h_signal_yield->GetBinContent(bin + 1);
                                 float n_signal_weighted = h_signal_yield_weighted->GetBinContent(bin + 1) * signal_cross_section_kfactor_efficiency;
 
@@ -250,8 +239,6 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                                 int n_background = 0;
                                 float n_background_weighted = 0;
                                 for (int i = 0; i < n_background_files; i++) {
-                                    // n_background += h_background_yield_weighted[i]->GetBinContent(bin)
-                                    //               * luminosity * background_cross_section_kfactor_efficiency[i] * 1000. / background_derivation_stat_weights[i];
                                     n_background += h_background_yield[i]->GetBinContent(bin + 1);
                                     n_background_weighted += h_background_yield_weighted[i]->GetBinContent(bin + 1);
                                 }
@@ -268,10 +255,6 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
                                 if (n_signal_weighted >= 2 &&
                                     n_background_weighted >= 1) {
                                     significance = RooStats::NumberCountingUtils::BinomialExpZ(n_signal_weighted, n_background_weighted, bkg_uncertainty);
-                                    // if (significance < 0) // when n_background >> n_signal
-                                    //     significance = 0;
-                                    // else if (significance > 100) // If ex: n_signal >> n_background then significance=inf
-                                    //     significance = 0;
                                 }
                                 else if (n_signal_weighted < 2)
                                     significance = 0.02;
@@ -313,6 +296,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
 
                         TCanvas *c1 = new TCanvas("c1", "c1");
                         gPad->SetLeftMargin(0.12);
+                        gPad->SetGridx(1);
+                        gPad->SetGridy(1);
                         gStyle->SetPaintTextFormat(".3f");
                         hist_n_signal->SetStats(kFALSE);
                         // hist_n_signal->GetXaxis()->SetNdivisions(120);
@@ -324,6 +309,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
 
                         TCanvas *c2 = new TCanvas("c2", "c2");
                         gPad->SetLeftMargin(0.12);
+                        gPad->SetGridx(1);
+                        gPad->SetGridy(1);
                         gStyle->SetPaintTextFormat(".3f");
                         hist_n_signal_weighted->SetStats(kFALSE);
                         // hist_n_signal_weighted->GetXaxis()->SetNdivisions(120);
@@ -335,6 +322,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
 
                         TCanvas *c3 = new TCanvas("c3", "c3");
                         gPad->SetLeftMargin(0.12);
+                        gPad->SetGridx(1);
+                        gPad->SetGridy(1);
                         gStyle->SetPaintTextFormat(".3f");
                         hist_n_background->SetStats(kFALSE);
                         // hist_n_background->GetXaxis()->SetNdivisions(120);
@@ -346,6 +335,8 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
 
                         TCanvas *c4 = new TCanvas("c4", "c4");
                         gPad->SetLeftMargin(0.12);
+                        gPad->SetGridx(1);
+                        gPad->SetGridy(1);
                         gStyle->SetPaintTextFormat(".3f");
                         hist_n_background_weighted->SetStats(kFALSE);
                         // hist_n_background_weighted->GetXaxis()->SetNdivisions(120);
@@ -357,10 +348,12 @@ void ytOptimization_plots(string signal_file = "optimization_MC_NUHM2_m12_500_st
 
                         TCanvas *c5 = new TCanvas("c5", "c5");
                         gPad->SetLeftMargin(0.12);
+                        gPad->SetGridx(1);
+                        gPad->SetGridy(1);
                         gStyle->SetPaintTextFormat(".3f");
                         hist->SetStats(kFALSE);
-                        // hist->GetXaxis()->SetNdivisions(110);
-                        // hist->GetYaxis()->SetNdivisions(110);
+                        // hist->GetXaxis()->SetNdivisions(120);
+                        // hist->GetYaxis()->SetNdivisions(120);
                         hist->GetYaxis()->SetTitleOffset(1.5);
                         hist->Draw("colz,text");
                         c5->SaveAs((hist_name + ".pdf").c_str());

@@ -2,6 +2,19 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v26. Change the bin of the histograms
+1. `yt_optimization.h`: Remove `vec_signal_jets_with_pt_cut` and `vec_signal_bjet_with_pt_cut`.
+2. `yt_optimization.cxx`:
+   * Comment the cout
+   * Change the constant values
+   * Define new constant `met_over_meff_cut`
+   * Remove unused code.
+3. `ytOptimization_plots.C`:
+   * Change the constant values
+   * Change the bin of the histograms
+   * Add the grid on the plots.
+
+
 ### v25. Fix bin problem in plot making script
 1. `yt_optimization.h`: Change the `jet_pt_cuts` value to 1
 2. `yt_optimization.cxx`: Modify method 1, it is similar to `apply_signal_region_cuts()` now.

@@ -55,9 +55,6 @@ public:
     vector<Jet>         vec_signal_jets;
     vector<Jet>         vec_signal_bjet;
 
-    // vector<Jet>         vec_signal_jets_with_pt_cut;
-    // vector<Jet>         vec_signal_bjet_with_pt_cut;
-
     // Declare the output
     TFile   *output_file;
     TTree   *output_tree;

@@ -3,11 +3,11 @@
 
 
 
-// const float yt_optimization::N_lept_cuts[5] = {2, 3, 4, 5, 6};
-// const float yt_optimization::N_bjet_cuts[6] = {0, 1, 2, 3, 4, 5};
-// const float yt_optimization::N_jets_cuts[9] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
-// const float yt_optimization::bjet_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
-// const float yt_optimization::jets_pt_cuts[9] = {20., 25., 30., 35., 40., 50., 70., 100., 150.};
+// const float yt_optimization::N_lept_cuts[3] = {2, 3, 4};
+// const float yt_optimization::N_bjet_cuts[5] = {0, 1, 2, 3, 4};
+// const float yt_optimization::N_jets_cuts[5] = {2, 3, 4, 5, 6};
+// const float yt_optimization::bjet_pt_cuts[5] = {20., 30., 40., 50., 70.};
+// const float yt_optimization::jets_pt_cuts[8] = {20., 25., 30., 40., 50., 70., 100., 150.};
 // const float yt_optimization::met_cuts[10] = {0., 50., 100., 150., 200., 250., 300., 350., 400., 500.};
 // const float yt_optimization::meff_cuts[21] = {
 //     0., 100., 200., 300., 400., 500., 600., 700., 800., 900., 1000.,
@@ -24,10 +24,11 @@ const float yt_optimization::jets_pt_cuts[1] = {25.};
 // const float yt_optimization::met_cuts[1] = {150.};
 // const float yt_optimization::meff_cuts[1] = {600.};
 
-#define N_lepts 2
-#define N_bjets 1
-#define Bjet_pT 20
-#define N_jets 6
+// #define N_lepts 2
+// #define N_bjets 1
+// #define Bjet_pT 20
+// #define N_jets 6
+#define met_over_meff_cut 0.25
 
 
 
@@ -286,8 +287,6 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             n_jets_pTX++;
     }
 
-
-
     // Method 1
     // Number of lepton requirement
     for (unsigned int i_lept = 0; i_lept < sizeof(N_lept_cuts) / sizeof(N_lept_cuts[0]); i_lept++) {
@@ -337,7 +336,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                     meff_cut_flag = true;
 
                                 bool met_over_meff_cut_flag = false;
-                                if (met_over_meff > 0.25)
+                                if (met_over_meff > met_over_meff_cut) // Need to modify this if no met/meff requirement
                                     met_over_meff_cut_flag = true;
 
                                 if (n_lept_cut_flag &&
@@ -346,12 +345,12 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                     met_cut_flag &&
                                     meff_cut_flag &&
                                     met_over_meff_cut_flag) {
-                                    cout << "Method1 pass n_lept >= " << N_lept_cuts[i_lept]
-                                        << ", n_bjet >= " << N_bjet_cuts[i_bjet] << " (with b-jets pT >" << bjet_pt_cuts[i_bjet_pt] << " GeV)"
-                                        << ", n_jets >=" << N_jets_cuts[i_jets] << " (with jets pT >" << jets_pt_cuts[i_jets_pt] << " GeV)"
-                                        << ", met > " << met_cuts[i_met] << " GeV"
-                                        << ", meff > " << meff_cuts[i_meff] << " GeV"
-                                        << endl;
+                                    // cout << "Method1 pass n_lept >= " << N_lept_cuts[i_lept]
+                                    //     << ", n_bjet >= " << N_bjet_cuts[i_bjet] << " (with b-jets pT >" << bjet_pt_cuts[i_bjet_pt] << " GeV)"
+                                    //     << ", n_jets >=" << N_jets_cuts[i_jets] << " (with jets pT >" << jets_pt_cuts[i_jets_pt] << " GeV)"
+                                    //     << ", met > " << met_cuts[i_met] << " GeV"
+                                    //     << ", meff > " << meff_cuts[i_meff] << " GeV"
+                                    //     << endl;
 
                                     // Calculate the bin to be filled
                                     int bin = 1 + i_meff;
@@ -376,7 +375,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
                                                   * sizeof(N_jets_cuts) / sizeof(N_jets_cuts[0])
                                                   * sizeof(met_cuts) / sizeof(met_cuts[0])
                                                   * sizeof(meff_cuts) / sizeof(meff_cuts[0]);
-                                    cout << "bin=" << bin << endl;
+                                    // cout << "bin=" << bin << endl;
 
                                     // Fill the histograms
                                     h_yields->AddBinContent(bin);
@@ -389,13 +388,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             }
         }
     }
-
-
-
-
-
-
-
+/*
     // Method 2
     bool n_lept_cut_flag = false,
          n_bjet_cut_flag = false;
@@ -410,8 +403,6 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             n_bjet_cut_flag =  true;
     }
     else { // N_bjets > 0
-        // this->fill_vec_jets_with_pT_cut("bjets", Bjet_pT);
-        // if (vec_signal_bjet_with_pt_cut.size() >= N_bjets)
         if (this->fill_vec_jets_with_pT_cut("bjets", Bjet_pT) >= N_bjets)
             n_bjet_cut_flag =  true;
     }
@@ -421,8 +412,6 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
         // Number of jets requirement with pT greater than some values
         for (unsigned int i_jets_pt = 0; i_jets_pt < sizeof(jets_pt_cuts) / sizeof(jets_pt_cuts[0]); i_jets_pt++) {
             bool n_jets_cut_flag = false;
-            // this->fill_vec_jets_with_pT_cut("jets", jets_pt_cuts[i_jets_pt]);
-            // if (vec_signal_jets_with_pt_cut.size() >= N_jets)
             if (this->fill_vec_jets_with_pT_cut("jets", jets_pt_cuts[i_jets_pt]) >= N_jets)
                 n_jets_cut_flag = true;
             if (n_jets_cut_flag) {
@@ -470,7 +459,7 @@ void yt_optimization::execute(vector<Electron> elec, vector<Muon> muon, vector<L
             }
         }
     }
-
+*/
 
     // Compare events
     // this->apply_signal_region_cuts(2, 20, 1, 25, 6, 150, 600, 0.25, weight); // SR1b1
@@ -545,9 +534,6 @@ void yt_optimization::reset_vectors()
     vec_signal_lept.clear();
     vec_signal_jets.clear();
     vec_signal_bjet.clear();
-
-    // vec_signal_jets_with_pt_cut.clear();
-    // vec_signal_bjet_with_pt_cut.clear();
 }
 
 
@@ -618,15 +604,11 @@ void yt_optimization::apply_signal_region_cuts(int cut_n_leptons,
             n_bjet_cut_flag =  true;
     }
     else { // cut_n_bjets > 0
-        // this->fill_vec_jets_with_pT_cut("bjets", cut_bjets_pT);
-        // if (static_cast<int> (vec_signal_bjet_with_pt_cut.size()) >= cut_n_bjets)
         if (this->fill_vec_jets_with_pT_cut("bjets", cut_bjets_pT) >= cut_n_bjets)
             n_bjet_cut_flag =  true;
     }
 
     bool n_jets_cut_flag = false;
-    // this->fill_vec_jets_with_pT_cut("jets", cut_jet_pt);
-    // if (static_cast<int> (vec_signal_jets_with_pt_cut.size()) >= cut_n_jet)
     if (this->fill_vec_jets_with_pT_cut("jets", cut_jet_pt) >= cut_n_jet)
         n_jets_cut_flag = true;
 
