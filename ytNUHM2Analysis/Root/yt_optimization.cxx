@@ -632,6 +632,19 @@ void yt_optimization::apply_signal_region_cuts(int cut_n_leptons,
         met_over_meff_cut_flag) {
         events_survived++;
         events_survived_weighted += weight;
+
+        // For Rpv2L0b, Rpv2L2bH, and Rpc3LSS1b
+        // if (mee <= 81 || mee >= 101) {
+        //     events_survived++;
+        //     events_survived_weighted += weight;
+        // }
+
+        // For Rpc2Lsoft1b and Rpc2Lsoft2b
+        // if (pTl1 > 20 && pTl1 < 100 &&
+        //     pTl2 > 10) {
+        //     events_survived++;
+        //     events_survived_weighted += weight;
+        // }
     }
 }
 

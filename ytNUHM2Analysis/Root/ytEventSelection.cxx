@@ -1343,6 +1343,19 @@ EL::StatusCode ytEventSelection::execute ()
 
         m_optimization->set_met(Etmiss_TST_Et);
 
+        if (vec_signal_lept.size() >= 2) {
+            m_optimization->set_pTl1(vec_signal_lept.at(0).get_pt() / 1000.); // in GeV
+            m_optimization->set_pTl2(vec_signal_lept.at(1).get_pt() / 1000.); // in GeV
+        }
+
+        if (vec_signal_elec.size() >= 2) {
+            TLorentzVector tlv_lept0, tlv_lept1;
+            tlv_lept0.SetPtEtaPhiE(vec_signal_lept[0].get_pt(), vec_signal_lept[0].get_eta(), vec_signal_lept[0].get_phi(), vec_signal_lept[0].get_E());
+            tlv_lept1.SetPtEtaPhiE(vec_signal_lept[1].get_pt(), vec_signal_lept[1].get_eta(), vec_signal_lept[1].get_phi(), vec_signal_lept[1].get_E());
+            double mee = (tlv_lept0 + tlv_lept1).M();
+            m_optimization->set_mee(mee / 1000.);
+        }
+
         m_optimization->execute(vec_signal_elec, vec_signal_muon, vec_signal_lept, vec_signal_jets);
     }
 

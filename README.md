@@ -2,6 +2,14 @@
 This is the framework for NUHM2 SR optimization.
 
 
+### v27. Add mee and pT requirements
+1. `yt_optimization.h`:
+    * Add three variables `pTl1`, `pTl2`, and `mee`
+    * Add three set functions for new variables.
+2. `yt_optimization.cxx`: Add mee and pT requirements.
+3. `ytEventSelection.cxx`: pass `pTl1`, `pTl2`, and `mee` to `m_optimization`
+
+
 ### v26. Change the bin of the histograms
 1. `yt_optimization.h`: Remove `vec_signal_jets_with_pt_cut` and `vec_signal_bjet_with_pt_cut`.
 2. `yt_optimization.cxx`:

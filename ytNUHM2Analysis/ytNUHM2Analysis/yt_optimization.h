@@ -42,6 +42,10 @@ public:
     float filter_efficiency;
     float cross_section_kfactor_efficiency;
 
+    float pTl1;
+    float pTl2;
+    float mee;
+
     // Weights
     double weight;
     float  event_weight;
@@ -162,6 +166,9 @@ public:
     void set_jet_weight(double d) { jet_weight = d; }
     void set_met(double d) { met = d; }
     void set_binning_default();
+    void set_pTl1(float f) { pTl1 = f; }
+    void set_pTl2(float f) { pTl2 = f; }
+    void set_mee(float f) { mee = f; }
 
     void reset_vectors();
     void copy_vectors(vector<Electron> elec, vector<Muon> muon, vector<Lepton> lept, vector<Jet> jets);
