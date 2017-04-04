@@ -137,8 +137,8 @@ public:
     int n_met_cuts_bins;
     int n_meff_cuts_bins;
 
-    int     events_survived;
-    double  events_survived_weighted;
+    int    events_survived;
+    double events_survived_weighted;
 
 public:
     yt_optimization();
